@@ -101,3 +101,6 @@ InitTestScene*.unity*
 #Test Scene
 Assets/Scenes/Test_Scene.unity
 Assets/Scenes/Test_Scene.unity.meta
+
+#SceneTemplateSettings
+/ProjectSettings/SceneTemplateSettings.json
