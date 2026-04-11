@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class SkeletonScript : MonoBehaviour
 {
     [SerializeField] private Patrol patrolComponent;
 
