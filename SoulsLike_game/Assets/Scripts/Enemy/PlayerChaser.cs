@@ -18,13 +18,12 @@ public class PlayerChaser : MonoBehaviour
     public void StopChasing()
     {
         target = null;
-        enabled = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (StopIfNoTarget()) return;
+        if (target == null) return;
 
         if (Vector2.Distance(target.position, transform.position) > stopDistance)
         {
@@ -35,15 +34,5 @@ public class PlayerChaser : MonoBehaviour
             if (direction != 0)
                 sprite.flipX = direction < 0;
         }
-    }
-
-    private bool StopIfNoTarget()
-    {
-        if (target == null)
-        {
-            StopChasing();
-            return true;
-        }
-        return false;
     }
 }
