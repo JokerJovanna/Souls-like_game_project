@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
 
-public class PlayerChaser : MonoBehaviour
+public class PlayerChaserComponent : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
     [SerializeField] private float stopDistance = 1.5f;

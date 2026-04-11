@@ -1,7 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Health : MonoBehaviour
+public class HealthComponent : MonoBehaviour
 {
     [SerializeField] private float maxHealth = 100f;
     private float currentHealth;

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class PlayerDetector : MonoBehaviour
+public class PlayerDetectorComponent : MonoBehaviour
 {
     [SerializeField] private string TargetTag = "Player";
 

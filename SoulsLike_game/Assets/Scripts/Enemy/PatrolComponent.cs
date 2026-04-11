@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Patrol : MonoBehaviour
+public class PatrolComponent : MonoBehaviour
 {
     [SerializeField] private float speed = 5.0f;
     [SerializeField] private Transform[] points;
