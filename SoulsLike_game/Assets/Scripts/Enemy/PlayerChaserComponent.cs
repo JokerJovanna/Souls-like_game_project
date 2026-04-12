@@ -9,14 +9,13 @@ public class PlayerChaserComponent : MonoBehaviour
 
     private Transform target;
 
-    public void StartChasing(GameObject target)
+    public void SetTarget(GameObject target)
     {
         if (target == null) return;
         this.target = target.transform;
-        enabled = true;
     }
 
-    public void StopChasing()
+    public void ClearTarget()
     {
         target = null;
     }

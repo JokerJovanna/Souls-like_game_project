@@ -5,8 +5,8 @@ public class PlayerDetectorComponent : MonoBehaviour
 {
     [SerializeField] private string TargetTag = "Player";
 
-    private Action<GameObject> OnPlayerDetected;
-    private Action<GameObject> OnPlayerLost;
+    public Action<GameObject> OnPlayerDetected;
+    public Action<GameObject> OnPlayerLost;
 
     private GameObject target;
 

@@ -24,10 +24,10 @@ public class HealthComponent : MonoBehaviour
 
     public void TakeDamage(AttackData attack)
     {
-        if (currentHealth < 0) return;
+        if (currentHealth <= 0) return;
         currentHealth -= attack.Damage;
         Debug.Log($"{name} получил {attack.Damage} урона. Осталось {currentHealth} HP.");
-        if (currentHealth < 0)
+        if (currentHealth <= 0)
             Die();
     }
 
