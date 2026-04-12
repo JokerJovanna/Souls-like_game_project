@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SkeletonScript : MonoBehaviour
 {
-    [SerializeField] private HealthComponent health;
+    [SerializeField] private EnemyHealthComponent health;
     [SerializeField] private AttackComponent attack;
     [SerializeField] private PatrolComponent patrol;
     [SerializeField] private PlayerChaserComponent chaser;
@@ -11,7 +11,7 @@ public class SkeletonScript : MonoBehaviour
 
     void Awake()
     {
-        health = GetComponent<HealthComponent>();
+        health = GetComponent<EnemyHealthComponent>();
         attack = GetComponent<AttackComponent>();
         patrol = GetComponent<PatrolComponent>();
         chaser = GetComponent<PlayerChaserComponent>();

@@ -12,7 +12,7 @@ public class SingleMeleeAttack : Attack
     {
         if (target == null) return;
 
-        var healthComponent = target.GetComponent<HealthComponent>();
+        var healthComponent = target.GetComponent<PlayerHealthComponent>();
         var attack = new AttackData(damage, attacker, canBeBlocked);
         healthComponent.TakeDamage(attack);
     }

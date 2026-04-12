@@ -1,7 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class HealthComponent : MonoBehaviour
+public class EnemyHealthComponent : MonoBehaviour
 {
     [SerializeField] private float maxHealth = 100f;
     private float currentHealth;
@@ -9,17 +9,6 @@ public class HealthComponent : MonoBehaviour
     private void Awake()
     {
         currentHealth = maxHealth;
-    }
-
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void TakeDamage(AttackData attack)
