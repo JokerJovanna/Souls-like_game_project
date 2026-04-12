@@ -25,9 +25,11 @@ public class PlayerChaserComponent : MonoBehaviour
     {
         if (target == null) return;
 
+        var nextPos = target.transform.position;
+        nextPos.y = transform.position.y;
         if (Vector2.Distance(target.position, transform.position) > stopDistance)
         {
-            var newPosition = Vector2.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
+            var newPosition = Vector2.MoveTowards(transform.position, nextPos, speed * Time.deltaTime);
             transform.position = newPosition;
 
             var direction = target.position.x - transform.position.x;
