@@ -33,6 +33,10 @@
 
 # Visual Studio cache directory
 .vs/
+.idea/
+
+#Work with AI
+AGENTS.md
 
 # Gradle cache directory
 .gradle/
