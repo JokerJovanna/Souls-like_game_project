@@ -72,7 +72,7 @@ public class Player : MonoBehaviour
             {
                 currentStamina -= staminaCostJump;
                 OnStaminaChanged?.Invoke(currentStamina, maxStamina);
-                rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
                 remainingJumps--;
                 nextJumpTime = Time.time + jumpCooldown;
             }
@@ -94,7 +94,7 @@ public class Player : MonoBehaviour
         float moveX = 0f;
         if (Input.GetKey(KeyCode.A)) moveX = -1f;
         if (Input.GetKey(KeyCode.D)) moveX = 1f;
-        rb.velocity = new Vector2(moveX * speed, rb.velocity.y);
+        rb.linearVelocity = new Vector2(moveX * speed, rb.linearVelocity.y);
     }
 
     public void Dodge()
@@ -117,7 +117,7 @@ public class Player : MonoBehaviour
 
         rb.gravityScale = 0f;
         float dodgeSpeed = dodgeDistance / dodgeDuration;
-        rb.velocity = dodgeDirection * dodgeSpeed;
+        rb.linearVelocity = dodgeDirection * dodgeSpeed;
     }
 
     public float Damage => throw new System.NotImplementedException();
