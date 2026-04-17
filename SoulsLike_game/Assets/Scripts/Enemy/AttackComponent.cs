@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class AttackComponent : MonoBehaviour
 {
+    [SerializeField] private PlayerChaserComponent chaser;
     [SerializeField] private Attack[] attacks;
     [SerializeField] private float cooldown = 2f;
 
@@ -22,6 +23,7 @@ public class AttackComponent : MonoBehaviour
     private void Start()
     {
         nextAttack = Random.Range(0, attacks.Length);
+        chaser.StopDistance = attacks[nextAttack].AttackDistance;
     }
 
     // Update is called once per frame
@@ -41,6 +43,7 @@ public class AttackComponent : MonoBehaviour
             attack.Perform(gameObject, target);
             cooldownTimer = cooldown;
             nextAttack = Random.Range(0, attacks.Length);
+            chaser.StopDistance = attacks[nextAttack].AttackDistance;
         }
     }
 }
