@@ -6,7 +6,7 @@ public class AttackComponent : MonoBehaviour
     [SerializeField] private Attack[] attacks;
     [SerializeField] private float cooldown = 2f;
 
-    private float cooldownTimer;
+    private float cooldownTimer = 0f;
     private GameObject target;
     private int nextAttack;
 

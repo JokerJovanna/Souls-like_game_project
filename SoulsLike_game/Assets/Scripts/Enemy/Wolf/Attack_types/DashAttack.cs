@@ -24,7 +24,9 @@ public class DashAttack : Attack
         chaser.enabled = false;
 
         var startPos = attacker.transform.position;
-        var direction = (target.transform.position - startPos).normalized;
+        var endPos = attacker.transform.position;
+        endPos.x = target.transform.position.x;
+        var direction = (endPos - startPos).normalized;
         var traveledDistance = 0f;
         var damageDealt = false;
 
