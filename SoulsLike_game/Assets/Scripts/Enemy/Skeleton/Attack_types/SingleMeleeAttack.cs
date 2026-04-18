@@ -1,3 +1,4 @@
+using System.Reflection;
 using UnityEngine;
 
 public class SingleMeleeAttack : Attack
@@ -11,6 +12,7 @@ public class SingleMeleeAttack : Attack
     public override void Perform(GameObject attacker, GameObject target)
     {
         if (target == null) return;
+        if (Vector2.Distance(target.transform.position, attacker.transform.position) > attackDistance) return;
 
         var healthComponent = target.GetComponent<PlayerHealthComponent>();
         var attack = new AttackData(damage, attacker, canBeBlocked);
