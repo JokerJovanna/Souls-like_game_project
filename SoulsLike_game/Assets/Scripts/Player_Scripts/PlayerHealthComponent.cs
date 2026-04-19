@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-public class HealthComponent : MonoBehaviour
+public class PlayerHealthComponent : MonoBehaviour
 {
     public float maxHealth = 100f;
     private float currentHealth;
@@ -32,7 +32,7 @@ public class HealthComponent : MonoBehaviour
         if (isInvincible && Time.time >= invincibilityEndTime) isInvincible = false;
     }
 
-    public void TakeDamage(float damage, GameObject source)
+    public void TakeDamage(AttackData attack)
     {
         if (isInvincible) return;
 
@@ -42,11 +42,11 @@ public class HealthComponent : MonoBehaviour
             return;
         }
 
-        float finalDamage = damage;
+        float finalDamage = attack.Damage;
         if (blockComponent.IsBlocking)
         {
-            finalDamage = damage * blockDamageReduction;
-            Debug.Log($"Урон заблокирован: {damage} -> {finalDamage}");
+            finalDamage = attack.Damage * blockDamageReduction;
+            Debug.Log($"Урон заблокирован: {attack.Damage} -> {finalDamage}");
         }
 
         currentHealth -= finalDamage;

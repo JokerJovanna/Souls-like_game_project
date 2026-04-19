@@ -6,7 +6,7 @@ public class Player : MonoBehaviour
     private JumpComponent jump;
     private DodgeComponent dodge;
     private StaminaComponent stamina;
-    private HealthComponent health;
+    private PlayerHealthComponent health;
     private BlockComponent block;
 
     public float CurrentHealth => health != null ? health.CurrentHealth : 0;
@@ -27,7 +27,7 @@ public class Player : MonoBehaviour
         jump = GetComponent<JumpComponent>();
         dodge = GetComponent<DodgeComponent>();
         stamina = GetComponent<StaminaComponent>();
-        health = GetComponent<HealthComponent>();
+        health = GetComponent<PlayerHealthComponent>();
         block = GetComponent<BlockComponent>();
     }
 
