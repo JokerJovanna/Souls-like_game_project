@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class WolfScript : MonoBehaviour
 {
-    [SerializeField] private EnemyHealthComponent health;
-    [SerializeField] private AttackComponent attack;
-    [SerializeField] private PatrolComponent patrol;
-    [SerializeField] private PlayerChaserComponent chaser;
-    [SerializeField] private PlayerDetectorComponent detector;
+    private EnemyHealthComponent health;
+    private AttackComponent attack;
+    private PatrolComponent patrol;
+    private PlayerChaserComponent chaser;
+    private PlayerDetectorComponent detector;
 
     void Awake()
     {

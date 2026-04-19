@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class AttackComponent : MonoBehaviour
 {
-    [SerializeField] private PlayerChaserComponent chaser;
     [SerializeField] private Attack[] attacks;
     [SerializeField] private float cooldown = 2f;
 
+    private PlayerChaserComponent chaser;
     private float cooldownTimer = 0f;
     private GameObject target;
     private int nextAttack;
@@ -18,6 +18,11 @@ public class AttackComponent : MonoBehaviour
     public void ClearTarget()
     {
         this.target = null;
+    }
+
+    private void Awake()
+    {
+        chaser = GetComponent<PlayerChaserComponent>();
     }
 
     private void Start()

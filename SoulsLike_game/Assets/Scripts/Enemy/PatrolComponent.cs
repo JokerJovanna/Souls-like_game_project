@@ -4,10 +4,16 @@ public class PatrolComponent : MonoBehaviour
 {
     [SerializeField] private float speed = 5.0f;
     [SerializeField] private Transform[] points;
-    [SerializeField] private SpriteRenderer sprite;
+
+    private SpriteRenderer sprite;
     private int nextPoint;
     private float waitTime;
-    
+
+    private void Awake()
+    {
+        sprite = GetComponent<SpriteRenderer>();
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

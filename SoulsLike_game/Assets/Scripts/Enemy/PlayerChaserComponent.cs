@@ -4,9 +4,9 @@ using UnityEngine;
 public class PlayerChaserComponent : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
-    [SerializeField] private SpriteRenderer sprite;
-
     public float StopDistance = 1.5f;
+
+    private SpriteRenderer sprite;
     private Transform target;
 
     public void SetTarget(GameObject target)
@@ -18,6 +18,11 @@ public class PlayerChaserComponent : MonoBehaviour
     public void ClearTarget()
     {
         target = null;
+    }
+
+    private void Awake()
+    {
+        sprite = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame

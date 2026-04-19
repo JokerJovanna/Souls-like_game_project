@@ -9,7 +9,6 @@ public class DashAttack : Attack
     [SerializeField] private float dashSpeed = 10f;
     [SerializeField] private float damage = 10f;
     [SerializeField] private bool canBeBlocked = false;
-    [SerializeField] private PlayerChaserComponent chaser;
 
     public override float AttackDistance => dashStartDistance;
 
@@ -21,8 +20,6 @@ public class DashAttack : Attack
 
     private IEnumerator DashRoutine(GameObject attacker, GameObject target)
     {
-        chaser.enabled = false;
-
         var startPos = attacker.transform.position;
         var endPos = attacker.transform.position;
         endPos.x = target.transform.position.x;
@@ -44,8 +41,6 @@ public class DashAttack : Attack
 
             yield return null;
         }
-
-        chaser.enabled = true;
     }
 
     private void MakeStep(GameObject attacker, ref float traveledDistance, Vector2 direction)
