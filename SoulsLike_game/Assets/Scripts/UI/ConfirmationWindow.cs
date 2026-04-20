@@ -32,9 +32,15 @@ namespace UI
             _onConfirm = onConfirm;
             _onCancel = onCancel;
             gameObject.SetActive(true);
+            _noButton.Select();
         }
 
         public void Hide() => gameObject.SetActive(false);
+
+        public void CallCancel()
+        {
+            Cancel();
+        }
 
         private void Confirm()
         {
