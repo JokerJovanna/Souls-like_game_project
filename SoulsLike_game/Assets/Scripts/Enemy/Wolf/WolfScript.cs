@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-public class SkeletonScript : MonoBehaviour
+public class WolfScript : MonoBehaviour
 {
     private EnemyHealthComponent health;
     private AttackComponent attack;
