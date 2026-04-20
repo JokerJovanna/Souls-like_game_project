@@ -24,7 +24,12 @@ namespace UI
             _mainMenuButton.onClick.RemoveAllListeners();
         }
 
-        public void Show() => gameObject.SetActive(true);
+        public void Show() 
+        {
+            gameObject.SetActive(true);
+            _continueButton.Select();
+        }
+        
         public void Hide() => gameObject.SetActive(false);
     }
 }
