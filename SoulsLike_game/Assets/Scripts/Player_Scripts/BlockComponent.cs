@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BlockComponent : MonoBehaviour
 {
-    public KeyCode blockKey = KeyCode.E;
+    public KeyCode blockKey = KeyCode.L;
 
     private bool isBlocking = false;
 

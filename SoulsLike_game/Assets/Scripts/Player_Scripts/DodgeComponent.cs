@@ -41,9 +41,9 @@ public class DodgeComponent : MonoBehaviour
     void Dodge()
     {
         float moveX = 0f;
-        if (Input.GetKey(KeyCode.A)) moveX = -1f;
-        if (Input.GetKey(KeyCode.D)) moveX = 1f;
-        if (moveX == 0) moveX = 1f;
+        if (Input.GetKey(KeyCode.A)) moveX = -5f;
+        if (Input.GetKey(KeyCode.D)) moveX = 5f;
+        if (moveX == 0) moveX = 5f;
 
         Vector2 dodgeDirection = new Vector2(moveX, 0).normalized;
 
