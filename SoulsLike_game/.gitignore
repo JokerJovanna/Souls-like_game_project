@@ -105,6 +105,6 @@ InitTestScene*.unity*
 #Test Scene
 Assets/Scenes/Test_Scene.unity
 Assets/Scenes/Test_Scene.unity.meta
-
+Assets/Animations/Interface/Main_menu/PlayerHealthComponent.cs
 #SceneTemplateSettings
 /ProjectSettings/SceneTemplateSettings.json
