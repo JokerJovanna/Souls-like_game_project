@@ -25,8 +25,6 @@ public class PatrolComponent : MonoBehaviour
             Debug.LogWarning($"{name}: Patrol has no waypoints, disabling.");
             return;
         }
-
-        waitTime = 0.5f + 4 * Random.value;
         nextPoint = Random.Range(0, points.Length);
     }
 
@@ -44,7 +42,6 @@ public class PatrolComponent : MonoBehaviour
         {
             waitTime = 0.5f + 4 * Random.value;
             nextPoint = Random.Range(0, points.Length);
-            animator.SetBool("isMoving", true);
         }
         else
         {
@@ -58,6 +55,7 @@ public class PatrolComponent : MonoBehaviour
 
     private void MoveTowardsTarget()
     {
+        animator.SetBool("isMoving", true);
         var nextPos = transform.position;
         nextPos.x = points[nextPoint].position.x;
 

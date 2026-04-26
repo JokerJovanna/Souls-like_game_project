@@ -49,11 +49,14 @@ public class AttackComponent : MonoBehaviour
             sprite.flipX = target.transform.position.x - gameObject.transform.position.x > 0;
 
         if (Vector2.Distance(transform.position, target.transform.position) <= attack.AttackDistance)
-        {
-            attack.Perform(gameObject, target);
-            cooldownTimer = cooldown;
-            nextAttack = Random.Range(0, attacks.Length);
-            chaser.StopDistance = attacks[nextAttack].AttackDistance;
-        }
+            PerformAttack(attack);
+    }
+
+    private void PerformAttack(Attack attack)
+    {
+        attack.Perform(gameObject, target);
+        cooldownTimer = cooldown;
+        nextAttack = Random.Range(0, attacks.Length);
+        chaser.StopDistance = attacks[nextAttack].AttackDistance;
     }
 }
