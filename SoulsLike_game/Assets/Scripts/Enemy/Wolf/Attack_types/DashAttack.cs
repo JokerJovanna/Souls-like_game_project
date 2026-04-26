@@ -11,6 +11,15 @@ public class DashAttack : Attack
     [SerializeField] private bool canBeBlocked = false;
 
     public override float AttackDistance => dashStartDistance;
+    public override bool IsPerforming => isPerforming;
+
+    private bool isPerforming = false;
+    private Animator animator;
+
+    private void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
 
     public override void Perform(GameObject attacker, GameObject target)
     {
@@ -27,6 +36,8 @@ public class DashAttack : Attack
         var traveledDistance = 0f;
         var damageDealt = false;
 
+        animator.SetTrigger("isAttacking");
+        isPerforming = true;
         while (traveledDistance < dashDistance)
         {
             MakeStep(attacker, ref traveledDistance, direction);
@@ -41,6 +52,7 @@ public class DashAttack : Attack
 
             yield return null;
         }
+        isPerforming = false;
     }
 
     private void MakeStep(GameObject attacker, ref float traveledDistance, Vector2 direction)

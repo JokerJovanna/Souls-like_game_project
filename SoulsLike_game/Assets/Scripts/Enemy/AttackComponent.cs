@@ -6,6 +6,7 @@ public class AttackComponent : MonoBehaviour
     [SerializeField] private float cooldown = 2f;
 
     private PlayerChaserComponent chaser;
+    private SpriteRenderer sprite;
     private float cooldownTimer = 0f;
     private GameObject target;
     private int nextAttack;
@@ -23,6 +24,7 @@ public class AttackComponent : MonoBehaviour
     private void Awake()
     {
         chaser = GetComponent<PlayerChaserComponent>();
+        sprite = GetComponent<SpriteRenderer>();
     }
 
     private void Start()
@@ -43,6 +45,9 @@ public class AttackComponent : MonoBehaviour
         }
 
         var attack = attacks[nextAttack];
+        if (!attack.IsPerforming)
+            sprite.flipX = target.transform.position.x - gameObject.transform.position.x > 0;
+
         if (Vector2.Distance(transform.position, target.transform.position) <= attack.AttackDistance)
         {
             attack.Perform(gameObject, target);

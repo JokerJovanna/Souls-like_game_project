@@ -6,12 +6,14 @@ public class PatrolComponent : MonoBehaviour
     [SerializeField] private Transform[] points;
 
     private SpriteRenderer sprite;
+    private Animator animator;
     private int nextPoint;
     private float waitTime;
 
     private void Awake()
     {
         sprite = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -42,9 +44,13 @@ public class PatrolComponent : MonoBehaviour
         {
             waitTime = 0.5f + 4 * Random.value;
             nextPoint = Random.Range(0, points.Length);
+            animator.SetBool("isMoving", true);
         }
         else
+        {
+            animator.SetBool("isMoving", false);
             waitTime -= Time.deltaTime;
+        }
     }
 
     private bool HasReachedTarget()
@@ -56,7 +62,7 @@ public class PatrolComponent : MonoBehaviour
         nextPos.x = points[nextPoint].position.x;
 
         if (nextPos.x - transform.position.x != 0)
-            sprite.flipX = (nextPos.x - transform.position.x) < 0;
+            sprite.flipX = (nextPos.x - transform.position.x) > 0;
 
         transform.position = Vector2.MoveTowards(transform.position, nextPos, speed * Time.deltaTime);
     }

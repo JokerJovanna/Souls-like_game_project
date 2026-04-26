@@ -8,6 +8,7 @@ public class SingleMeleeAttack : Attack
     [SerializeField] private float attackDistance = 1.5f;
 
     public override float AttackDistance => attackDistance;
+    public override bool IsPerforming => false;
 
     public override void Perform(GameObject attacker, GameObject target)
     {
