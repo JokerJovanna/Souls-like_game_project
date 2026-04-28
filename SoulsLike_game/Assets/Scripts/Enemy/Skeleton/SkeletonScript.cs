@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class SkeletonScript : MonoBehaviour
 {
-    [SerializeField] private EnemyHealthComponent health;
-    [SerializeField] private AttackComponent attack;
-    [SerializeField] private PatrolComponent patrol;
-    [SerializeField] private PlayerChaserComponent chaser;
-    [SerializeField] private PlayerDetectorComponent detector;
+    private EnemyHealthComponent health;
+    private AttackComponent attack;
+    private PatrolComponent patrol;
+    private PlayerChaserComponent chaser;
+    private PlayerDetectorComponent detector;
 
     void Awake()
     {
@@ -25,14 +25,8 @@ public class SkeletonScript : MonoBehaviour
 
     void Start()
     {
-        health.enabled = true;
-        attack.enabled = true;
-        patrol.enabled = true;
-        chaser.enabled = true;
-        detector.enabled = true;
-
-        detector.OnPlayerDetected += OnPlayerDetected;
-        detector.OnPlayerLost += OnPlayerLost;
+        InitializeComponents();
+        DisableCollisionWithPlayer();
     }
 
     void Update()
@@ -60,6 +54,51 @@ public class SkeletonScript : MonoBehaviour
         {
             detector.OnPlayerDetected -= OnPlayerDetected;
             detector.OnPlayerLost -= OnPlayerLost;
+        }
+    }
+
+    private void InitializeComponents()
+    {
+        health.enabled = true;
+        attack.enabled = true;
+        patrol.enabled = true;
+        chaser.enabled = true;
+        detector.enabled = true;
+
+        detector.OnPlayerDetected += OnPlayerDetected;
+        detector.OnPlayerLost += OnPlayerLost;
+    }
+
+    private Collider2D GetEnemyCollider()
+    {
+        var enemyNormalCollider = GetComponent<Collider2D>();
+        if (enemyNormalCollider != null && enemyNormalCollider.isTrigger)
+        {
+            // Если случайно получили триггер, ищем другой коллайдер
+            Collider2D[] colliders = GetComponents<Collider2D>();
+            foreach (var col in colliders)
+            {
+                if (!col.isTrigger)
+                {
+                    enemyNormalCollider = col;
+                    break;
+                }
+            }
+        }
+        return enemyNormalCollider;
+    }
+
+    private void DisableCollisionWithPlayer()
+    {
+        var enemyCol = GetEnemyCollider();
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            Collider2D playerCollider = player.GetComponent<Collider2D>();
+            if (playerCollider != null && enemyCol != null)
+            {
+                Physics2D.IgnoreCollision(playerCollider, enemyCol, true);
+            }
         }
     }
 }

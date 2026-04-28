@@ -10,8 +10,9 @@ namespace UI
         [SerializeField] private PauseMenuWindow _pauseMenu;
         [SerializeField] private ConfirmationWindow _confirmationMenu;
 
-        private enum UIState { MainMenu, Gameplay, Paused }
+        private enum UIState { MainMenu, Gameplay, Paused, Confirmation }
         private UIState _currentState;
+        private UIState _previousState; // Храним предыдущее состояние для возврата(ESC)
 
         private void Awake()
         {
@@ -25,10 +26,28 @@ namespace UI
 
         private void Update()
         {
-            // Используем новую систему ввода (Input System Package)
-            if (_currentState == UIState.Gameplay && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+            // Возвращаем старую систему ввода - слушаем кнопку ESC!
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                HandleEscapeNavigation();
+            }
+        }
+
+        private void HandleEscapeNavigation()
+        {
+            // Навигация назад (ESC) зависит от текущего открытого окна
+            if (_currentState == UIState.Gameplay)
             {
                 OpenPauseMenu();
+            }
+            else if (_currentState == UIState.Paused)
+            {
+                ResumeGame();
+            }
+            else if (_currentState == UIState.Confirmation)
+            {
+                // Имитируем нажатие "НЕТ", окно закроется и само вызовет возврат
+                _confirmationMenu.CallCancel();
             }
         }
 
@@ -65,39 +84,51 @@ namespace UI
 
         private void OpenMainMenu()
         {
+            _previousState = _currentState;
             _currentState = UIState.MainMenu;
             CloseAllWindows();
+            Time.timeScale = 1f;
             _mainMenu.Show();
         }
 
         private void StartGame()
         {
+            _previousState = _currentState;
             _currentState = UIState.Gameplay;
             CloseAllWindows();
+            Time.timeScale = 1f;
             _gameplayUI.Show();
         }
 
         private void OpenPauseMenu()
         {
+            _previousState = _currentState;
             _currentState = UIState.Paused;
+            Time.timeScale = 0f;
             _pauseMenu.Show();
         }
 
         private void ResumeGame()
         {
+            _previousState = _currentState;
             _currentState = UIState.Gameplay;
+            Time.timeScale = 1f;
             _pauseMenu.Hide();
         }
 
         private void RequestExitToMainMenu()
         {
+            _previousState = _currentState; // Запоминаем, что мы были в паузе
+            _currentState = UIState.Confirmation;
             _confirmationMenu.Show("Выйти в главное меню без сохранения?", 
                 onConfirm: OpenMainMenu, 
-                onCancel: () => { /* ничего не делаем, окно само скроется */ });
+                onCancel: RestoreStateAfterConfirmation);
         }
 
         private void RequestExitFromApp()
         {
+            _previousState = _currentState; // Запоминаем, что мы были в меню
+            _currentState = UIState.Confirmation;
             _confirmationMenu.Show("Вы уверены что хотите выйти?", 
                 onConfirm: () => 
                 {
@@ -107,7 +138,19 @@ namespace UI
                     Application.Quit();
 #endif
                 }, 
-                onCancel: () => { /* окно скроется */ });
+                onCancel: RestoreStateAfterConfirmation);
+        }
+
+        private void RestoreStateAfterConfirmation()
+        {
+            // Возвращаемся в состояние, из которого вызвали confirmation
+            _currentState = _previousState;
+            
+            // Если отменили выход из главного меню - возвращаем фокус кнопкам меню
+            if (_currentState == UIState.MainMenu) _mainMenu.Show();
+            
+            // Если отменили выход из паузы - возвращаем фокус кнопкам паузы
+            if (_currentState == UIState.Paused) _pauseMenu.Show();
         }
     }
 }

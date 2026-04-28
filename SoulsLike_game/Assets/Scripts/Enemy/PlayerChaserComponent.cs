@@ -4,9 +4,9 @@ using UnityEngine;
 public class PlayerChaserComponent : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
-    [SerializeField] private float stopDistance = 1.5f;
-    [SerializeField] private SpriteRenderer sprite;
+    public float StopDistance = 1.5f;
 
+    private SpriteRenderer sprite;
     private Transform target;
 
     public void SetTarget(GameObject target)
@@ -20,6 +20,11 @@ public class PlayerChaserComponent : MonoBehaviour
         target = null;
     }
 
+    private void Awake()
+    {
+        sprite = GetComponent<SpriteRenderer>();
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -27,7 +32,7 @@ public class PlayerChaserComponent : MonoBehaviour
 
         var nextPos = target.transform.position;
         nextPos.y = transform.position.y;
-        if (Vector2.Distance(target.position, transform.position) > stopDistance)
+        if (Vector2.Distance(target.position, transform.position) > StopDistance)
         {
             var newPosition = Vector2.MoveTowards(transform.position, nextPos, speed * Time.deltaTime);
             transform.position = newPosition;

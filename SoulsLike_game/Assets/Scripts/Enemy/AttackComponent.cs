@@ -5,7 +5,8 @@ public class AttackComponent : MonoBehaviour
     [SerializeField] private Attack[] attacks;
     [SerializeField] private float cooldown = 2f;
 
-    private float cooldownTimer;
+    private PlayerChaserComponent chaser;
+    private float cooldownTimer = 0f;
     private GameObject target;
     private int nextAttack;
 
@@ -19,9 +20,15 @@ public class AttackComponent : MonoBehaviour
         this.target = null;
     }
 
+    private void Awake()
+    {
+        chaser = GetComponent<PlayerChaserComponent>();
+    }
+
     private void Start()
     {
         nextAttack = Random.Range(0, attacks.Length);
+        chaser.StopDistance = attacks[nextAttack].AttackDistance;
     }
 
     // Update is called once per frame
@@ -41,6 +48,7 @@ public class AttackComponent : MonoBehaviour
             attack.Perform(gameObject, target);
             cooldownTimer = cooldown;
             nextAttack = Random.Range(0, attacks.Length);
+            chaser.StopDistance = attacks[nextAttack].AttackDistance;
         }
     }
 }
