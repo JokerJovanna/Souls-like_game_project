@@ -6,9 +6,11 @@ public class AttackComponent : MonoBehaviour
     [SerializeField] private float cooldown = 2f;
 
     private PlayerChaserComponent chaser;
+    private SpriteRenderer sprite;
     private float cooldownTimer = 0f;
     private GameObject target;
     private int nextAttack;
+    private Attack currentAttack;
 
     public void SetTarget(GameObject target)
     {
@@ -23,11 +25,13 @@ public class AttackComponent : MonoBehaviour
     private void Awake()
     {
         chaser = GetComponent<PlayerChaserComponent>();
+        sprite = GetComponent<SpriteRenderer>();
     }
 
     private void Start()
     {
         nextAttack = Random.Range(0, attacks.Length);
+        currentAttack = attacks[nextAttack];
         chaser.StopDistance = attacks[nextAttack].AttackDistance;
     }
 
@@ -35,6 +39,7 @@ public class AttackComponent : MonoBehaviour
     void Update()
     {
         if (target == null) return;
+        if (currentAttack.IsPerforming) return;
 
         if (cooldownTimer > 0f)
         {
@@ -42,13 +47,18 @@ public class AttackComponent : MonoBehaviour
             return;
         }
 
-        var attack = attacks[nextAttack];
-        if (Vector2.Distance(transform.position, target.transform.position) <= attack.AttackDistance)
-        {
-            attack.Perform(gameObject, target);
-            cooldownTimer = cooldown;
-            nextAttack = Random.Range(0, attacks.Length);
-            chaser.StopDistance = attacks[nextAttack].AttackDistance;
-        }
+        currentAttack = attacks[nextAttack];
+        sprite.flipX = target.transform.position.x - gameObject.transform.position.x > 0;
+
+        if (Vector2.Distance(transform.position, target.transform.position) <= currentAttack.AttackDistance)
+            PerformAttack(currentAttack);
+    }
+
+    private void PerformAttack(Attack attack)
+    {
+        attack.Perform(gameObject, target);
+        cooldownTimer = cooldown;
+        nextAttack = Random.Range(0, attacks.Length);
+        chaser.StopDistance = attacks[nextAttack].AttackDistance;
     }
 }
