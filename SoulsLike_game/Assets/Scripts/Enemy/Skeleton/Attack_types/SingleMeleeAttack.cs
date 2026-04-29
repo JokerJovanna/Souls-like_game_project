@@ -9,27 +9,28 @@ public class SingleMeleeAttack : Attack
 
     public override float AttackDistance => attackDistance;
     public override float AttackRange => attackRange;
-    public override bool IsPerforming => false;
+    public override bool IsPerforming => isPerforming;
 
     private Animator animator;
     private PlayerChaserComponent chaser;
     private SpriteRenderer sprite;
+    private EnemySoundComponent sound;
     private GameObject currentTarget;
     private GameObject currentAttacker;
+    private bool isPerforming;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
         chaser = GetComponent<PlayerChaserComponent>();
         sprite = GetComponent<SpriteRenderer>();
+        sound = GetComponent<EnemySoundComponent>();
     }
 
     public override void Perform(GameObject attacker, GameObject target)
     {
         if (target == null) return;
         if (Vector2.Distance(target.transform.position, attacker.transform.position) > attackRange) return;
-
-        chaser.enabled = false;
         animator.SetTrigger("isAttacking");
         currentAttacker = attacker;
         currentTarget = target;
@@ -38,6 +39,13 @@ public class SingleMeleeAttack : Attack
     private void OnAttackEnd()
     {
         chaser.enabled = true;
+        isPerforming = false;
+    }
+
+    private void OnAttackStart()
+    {
+        chaser.enabled = false;
+        isPerforming = true;
     }
 
     private void OnHit()
