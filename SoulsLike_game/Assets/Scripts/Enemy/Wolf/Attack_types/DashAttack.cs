@@ -11,6 +11,7 @@ public class DashAttack : Attack
     [SerializeField] private bool canBeBlocked = false;
 
     public override float AttackDistance => dashStartDistance;
+    public override float AttackRange => dashDistance;
     public override bool IsPerforming => isPerforming;
 
     private bool isPerforming = false;

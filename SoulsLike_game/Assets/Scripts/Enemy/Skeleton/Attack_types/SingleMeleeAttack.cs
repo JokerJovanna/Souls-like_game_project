@@ -5,8 +5,10 @@ public class SingleMeleeAttack : Attack
     [SerializeField] private float damage = 10f;
     [SerializeField] private bool canBeBlocked = true;
     [SerializeField] private float attackDistance = 1.5f;
+    [SerializeField] private float attackRange = 2f;
 
     public override float AttackDistance => attackDistance;
+    public override float AttackRange => attackRange;
     public override bool IsPerforming => false;
 
     private Animator animator;
@@ -25,7 +27,7 @@ public class SingleMeleeAttack : Attack
     public override void Perform(GameObject attacker, GameObject target)
     {
         if (target == null) return;
-        if (Vector2.Distance(target.transform.position, attacker.transform.position) > attackDistance) return;
+        if (Vector2.Distance(target.transform.position, attacker.transform.position) > attackRange) return;
 
         chaser.enabled = false;
         animator.SetTrigger("isAttacking");
