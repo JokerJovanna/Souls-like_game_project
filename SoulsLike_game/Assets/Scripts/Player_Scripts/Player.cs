@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     public event System.Action<float, float> OnStaminaChanged;
     public event System.Action OnDie;
     public event System.Action OnHealPotionCountChanged;
+    private Animator animator;
 
     void Awake()
     {
@@ -29,6 +30,7 @@ public class Player : MonoBehaviour
         stamina = GetComponent<StaminaComponent>();
         health = GetComponent<PlayerHealthComponent>();
         block = GetComponent<BlockComponent>();
+        animator = GetComponent<Animator>();
     }
 
     void Start()
@@ -41,6 +43,25 @@ public class Player : MonoBehaviour
         if (stamina != null)
         {
             stamina.OnStaminaChanged += (cur, max) => OnStaminaChanged?.Invoke(cur, max);
+        }
+        if (jump != null)
+        {
+            jump.OnJump += () => animator?.SetTrigger("JumpTrigger");
+        }
+    }
+
+    void Update()
+    {
+        if (animator == null) return;
+
+        float speedValue = movement != null ? movement.HorizontalSpeed : 0f;
+        animator.SetFloat("Speed", speedValue);
+        animator.SetBool("IsGrounded", jump != null && jump.IsGrounded);
+        animator.SetBool("IsDodging", IsDodging);
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            animator.SetTrigger("AttackTrigger");
         }
     }
 }

@@ -3,6 +3,9 @@ using System;
 
 public class PlayerHealthComponent : MonoBehaviour
 {
+    public AudioClip blockSound;
+    private AudioSource audioSource;
+
     public float maxHealth = 100f;
     private float currentHealth;
 
@@ -14,6 +17,8 @@ public class PlayerHealthComponent : MonoBehaviour
 
     private DodgeComponent dodgeComponent;
     private BlockComponent blockComponent;
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
 
     public event Action<float, float> OnHealthChanged;
     public event Action OnDie;
@@ -25,11 +30,18 @@ public class PlayerHealthComponent : MonoBehaviour
 
         dodgeComponent = GetComponent<DodgeComponent>();
         blockComponent = GetComponent<BlockComponent>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        audioSource = GetComponent<AudioSource>();
+        originalColor = spriteRenderer.color;
     }
 
     void Update()
     {
-        if (isInvincible && Time.time >= invincibilityEndTime) isInvincible = false;
+        if (isInvincible && Time.time >= invincibilityEndTime)
+        {
+            isInvincible = false;
+            if (spriteRenderer != null) spriteRenderer.color = originalColor;
+        }
     }
 
     public void TakeDamage(AttackData attack)
@@ -43,24 +55,28 @@ public class PlayerHealthComponent : MonoBehaviour
         }
 
         float finalDamage = attack.Damage;
-        if (blockComponent.IsBlocking)
+        if (blockComponent.IsBlocking && blockComponent != null)
         {
             finalDamage = attack.Damage * blockDamageReduction;
             Debug.Log($"Урон заблокирован: {attack.Damage} -> {finalDamage}");
+            if (audioSource != null && blockSound != null)
+                audioSource.PlayOneShot(blockSound);
         }
 
         currentHealth -= finalDamage;
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        Debug.Log(currentHealth);
+
+        if (spriteRenderer != null) spriteRenderer.color = Color.red;
+
+        isInvincible = true;
+        invincibilityEndTime = Time.time + invincibilityDuration;
 
         if (currentHealth <= 0f)
         {
             currentHealth = 0f;
             Die();
-            return;
         }
-
-        isInvincible = true;
-        invincibilityEndTime = Time.time + invincibilityDuration;
     }
 
     
