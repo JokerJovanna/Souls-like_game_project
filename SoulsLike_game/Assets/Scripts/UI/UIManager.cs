@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 namespace UI
 {
@@ -13,6 +14,7 @@ namespace UI
         private enum UIState { MainMenu, Gameplay, Paused, Confirmation }
         private UIState _currentState;
         private UIState _previousState; // Храним предыдущее состояние для возврата(ESC)
+        private GameObject _lastSelectedGameObject; // Сохраняем последний выбранный (фокусный) элемент интерфейса
 
         private void Awake()
         {
@@ -26,10 +28,28 @@ namespace UI
 
         private void Update()
         {
+            EnsureUISelection();
+
             // Возвращаем старую систему ввода - слушаем кнопку ESC!
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 HandleEscapeNavigation();
+            }
+        }
+
+        private void EnsureUISelection()
+        {
+            if (EventSystem.current == null) return;
+
+            // Обновляем ссылку, если игрок выбрал новый элемент интерфейса.
+            if (EventSystem.current.currentSelectedGameObject != null)
+            {
+                _lastSelectedGameObject = EventSystem.current.currentSelectedGameObject;
+            }
+            // Если игрок кликнул мимо кнопок (пустое место), возвращаем фокус на последний выделенный элемент.
+            else if (_lastSelectedGameObject != null && _lastSelectedGameObject.activeInHierarchy)
+            {
+                EventSystem.current.SetSelectedGameObject(_lastSelectedGameObject);
             }
         }
 

@@ -8,6 +8,7 @@ public class PlayerChaserComponent : MonoBehaviour
 
     private SpriteRenderer sprite;
     private Transform target;
+    private Animator animator;
 
     public void SetTarget(GameObject target)
     {
@@ -23,6 +24,7 @@ public class PlayerChaserComponent : MonoBehaviour
     private void Awake()
     {
         sprite = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -34,12 +36,15 @@ public class PlayerChaserComponent : MonoBehaviour
         nextPos.y = transform.position.y;
         if (Vector2.Distance(target.position, transform.position) > StopDistance)
         {
+            animator.SetBool("isMoving", true);
             var newPosition = Vector2.MoveTowards(transform.position, nextPos, speed * Time.deltaTime);
             transform.position = newPosition;
 
             var direction = target.position.x - transform.position.x;
             if (direction != 0)
-                sprite.flipX = direction < 0;
+                sprite.flipX = direction > 0;
         }
+        else
+            animator.SetBool("isMoving", false);
     }
 }
