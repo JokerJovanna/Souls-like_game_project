@@ -26,13 +26,25 @@ namespace UI
             _noButton.onClick.RemoveAllListeners();
         }
 
-        public void Show(string message, Action onConfirm, Action onCancel)
+        [SerializeField] private Image _backgroundImage;
+
+        public void Show(string message, Action onConfirm, Action onCancel, Sprite background = null)
         {
             _messageText.text = message;
             _onConfirm = onConfirm;
             _onCancel = onCancel;
+            SetBackground(background);
             gameObject.SetActive(true);
             _noButton.Select();
+        }
+
+        private void SetBackground(Sprite background)
+        {
+            if (_backgroundImage != null)
+            {
+                _backgroundImage.sprite = background;
+                _backgroundImage.enabled = background != null;
+            }
         }
 
         public void Hide() => gameObject.SetActive(false);

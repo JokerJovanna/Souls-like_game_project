@@ -10,7 +10,9 @@ namespace UI
         [SerializeField] private GameplayWindow _gameplayUI;
         [SerializeField] private PauseMenuWindow _pauseMenu;
         [SerializeField] private ConfirmationWindow _confirmationMenu;
-
+        // Background sprites for different confirmation windows
+        [SerializeField] private Sprite _mainMenuExitBackground;
+        [SerializeField] private Sprite _appExitBackground;
         private enum UIState { MainMenu, Gameplay, Paused, Confirmation }
         private UIState _currentState;
         private UIState _previousState; // Храним предыдущее состояние для возврата(ESC)
@@ -140,25 +142,31 @@ namespace UI
         {
             _previousState = _currentState; // Запоминаем, что мы были в паузе
             _currentState = UIState.Confirmation;
-            _confirmationMenu.Show("Выйти в главное меню без сохранения?", 
-                onConfirm: OpenMainMenu, 
-                onCancel: RestoreStateAfterConfirmation);
+            _confirmationMenu.Show(
+                // "Выйти в главное меню без сохранения?",
+                "",
+                onConfirm: OpenMainMenu,
+                onCancel: RestoreStateAfterConfirmation,
+                background: _mainMenuExitBackground);
         }
 
         private void RequestExitFromApp()
         {
             _previousState = _currentState; // Запоминаем, что мы были в меню
             _currentState = UIState.Confirmation;
-            _confirmationMenu.Show("Вы уверены что хотите выйти?", 
-                onConfirm: () => 
+            _confirmationMenu.Show(
+                // "Вы уверены что хотите выйти?",
+                "",
+                onConfirm: () =>
                 {
 #if UNITY_EDITOR
                     UnityEditor.EditorApplication.isPlaying = false;
 #else
                     Application.Quit();
 #endif
-                }, 
-                onCancel: RestoreStateAfterConfirmation);
+                },
+                onCancel: RestoreStateAfterConfirmation,
+                background: _appExitBackground);
         }
 
         private void RestoreStateAfterConfirmation()
