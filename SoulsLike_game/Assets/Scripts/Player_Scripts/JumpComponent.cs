@@ -23,6 +23,7 @@ public class JumpComponent : MonoBehaviour
 
     public event System.Action OnJump;
     private PlayerAttackComponent attack;
+    private BlockComponent block;
 
     public bool IsGrounded => isGrounded;
 
@@ -32,6 +33,7 @@ public class JumpComponent : MonoBehaviour
         stamina = GetComponent<StaminaComponent>();
         attack = GetComponent<PlayerAttackComponent>();
         audioSource = GetComponent<AudioSource>();
+        block = GetComponent<BlockComponent>();
         remainingJumps = maxJumps;
 
         if (groundCheck == null)
@@ -45,7 +47,8 @@ public class JumpComponent : MonoBehaviour
 
     void Update()
     {
-        if (attack != null && attack.IsAttacking)
+        if ((attack != null && attack.IsAttacking) ||
+        (block != null && block.IsBlocking))
         {
             //Debug.Log("Jump blocked by attack");
             return;

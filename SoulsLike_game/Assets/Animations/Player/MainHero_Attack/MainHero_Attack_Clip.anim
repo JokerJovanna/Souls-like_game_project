@@ -21,40 +21,54 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: -5518264364299436604, guid: 27ee6de6e421b1441ac206d6cfae31f7, type: 3}
-    - time: 0.111
-      value: {fileID: 5917275235932560403, guid: 27ee6de6e421b1441ac206d6cfae31f7, type: 3}
-    - time: 0.222
-      value: {fileID: 1683804870909102067, guid: 27ee6de6e421b1441ac206d6cfae31f7, type: 3}
-    - time: 0.333
-      value: {fileID: 4894843917328430181, guid: 27ee6de6e421b1441ac206d6cfae31f7, type: 3}
-    - time: 0.444
-      value: {fileID: -9082766374092238417, guid: 27ee6de6e421b1441ac206d6cfae31f7, type: 3}
-    - time: 0.555
-      value: {fileID: -8953759345677905030, guid: 27ee6de6e421b1441ac206d6cfae31f7, type: 3}
-    - time: 0.666
-      value: {fileID: -9223232166219497492, guid: 27ee6de6e421b1441ac206d6cfae31f7, type: 3}
-    - time: 0.767
-      value: {fileID: -9223232166219497492, guid: 27ee6de6e421b1441ac206d6cfae31f7, type: 3}
+      value: {fileID: 2513678005320912552, guid: 0b36337c25e78ba49b26aafc38fd2b40, type: 3}
+    - time: 0.083333336
+      value: {fileID: 4470475185494392362, guid: 0a8cc960ce761fa4e892d5f9c4ce1a77, type: 3}
+    - time: 0.16666667
+      value: {fileID: -796909989693035748, guid: f042107072c29fb428336a76bfc003e9, type: 3}
+    - time: 0.25
+      value: {fileID: 5901116119258710659, guid: 08b436d0f92a13741b98533a40ce544c, type: 3}
+    - time: 0.33333334
+      value: {fileID: -848180374260508602, guid: caf4de2aa134aa7489dbfd7436bb0521, type: 3}
+    - time: 0.41666666
+      value: {fileID: 6384219090786961157, guid: 9476fbe56ab3aec44b9a50b9b11ad080, type: 3}
+    - time: 0.5
+      value: {fileID: -2839067477888741762, guid: 1764ec3c66f0b594ca50cdd16ec5ceef, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
     script: {fileID: 0}
     flags: 2
-  m_SampleRate: 100
+  m_SampleRate: 12
   m_WrapMode: 0
   m_Bounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
   m_ClipBindingConstant:
-    genericBindings: []
-    pptrCurveMapping: []
+    genericBindings:
+    - serializedVersion: 2
+      path: 0
+      attribute: 0
+      script: {fileID: 0}
+      typeID: 212
+      customType: 23
+      isPPtrCurve: 1
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+    pptrCurveMapping:
+    - {fileID: 2513678005320912552, guid: 0b36337c25e78ba49b26aafc38fd2b40, type: 3}
+    - {fileID: 4470475185494392362, guid: 0a8cc960ce761fa4e892d5f9c4ce1a77, type: 3}
+    - {fileID: -796909989693035748, guid: f042107072c29fb428336a76bfc003e9, type: 3}
+    - {fileID: 5901116119258710659, guid: 08b436d0f92a13741b98533a40ce544c, type: 3}
+    - {fileID: -848180374260508602, guid: caf4de2aa134aa7489dbfd7436bb0521, type: 3}
+    - {fileID: 6384219090786961157, guid: 9476fbe56ab3aec44b9a50b9b11ad080, type: 3}
+    - {fileID: -2839067477888741762, guid: 1764ec3c66f0b594ca50cdd16ec5ceef, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.777
+    m_StopTime: 0.5833333
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -65,7 +79,7 @@ AnimationClip:
     m_LoopBlendPositionY: 0
     m_LoopBlendPositionXZ: 0
     m_KeepOriginalOrientation: 0
-    m_KeepOriginalPositionY: 0
+    m_KeepOriginalPositionY: 1
     m_KeepOriginalPositionXZ: 0
     m_HeightFromFeet: 0
     m_Mirror: 0

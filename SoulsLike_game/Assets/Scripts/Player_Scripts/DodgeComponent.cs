@@ -12,6 +12,7 @@ public class DodgeComponent : MonoBehaviour
     private Rigidbody2D rb;
     private StaminaComponent stamina;
     private MovementComponent movement;
+    private BlockComponent block;
     private AudioSource audioSource;
     private bool isDodging = false;
     private float dodgeEndTime = 0f;
@@ -23,11 +24,14 @@ public class DodgeComponent : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         stamina = GetComponent<StaminaComponent>();
         movement = GetComponent<MovementComponent>();
+        block = GetComponent<BlockComponent>();
         audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
     {
+        if (block != null && block.IsBlocking) return;
+
         if (Input.GetKeyDown(KeyCode.LeftShift) && !isDodging && 
             Time.time >= nextDodgeTime)
         {

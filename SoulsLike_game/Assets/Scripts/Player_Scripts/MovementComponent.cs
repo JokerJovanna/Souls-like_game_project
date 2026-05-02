@@ -1,5 +1,6 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
+using static Unity.Collections.AllocatorManager;
 
 public class MovementComponent : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class MovementComponent : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private PlayerAttackComponent attack;
     private JumpComponent jump;
+    private BlockComponent block;
     private AudioSource audioSource;
 
     private float currentHorizontalSpeed;
@@ -29,11 +31,14 @@ public class MovementComponent : MonoBehaviour
         attack = GetComponent<PlayerAttackComponent>();
         audioSource = GetComponent<AudioSource>();
         jump = GetComponent<JumpComponent>();
+        block = GetComponent<BlockComponent>();
     }
 
     void FixedUpdate()
     {
-        if ((dodge != null && dodge.IsDodging) || (attack != null && attack.IsAttacking))
+        if ((dodge != null && dodge.IsDodging) ||
+            (attack != null && attack.IsAttacking) ||
+            (block != null && block.IsBlocking))
         {
             if (footstepCoroutine != null)
             {
@@ -44,19 +49,23 @@ public class MovementComponent : MonoBehaviour
         }
 
         float moveX = 0f;
-        if (Input.GetKey(KeyCode.A)) moveX = -1f;
-        if (Input.GetKey(KeyCode.D)) moveX = 1f;
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+            moveX = -1f;
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+            moveX = 1f;
+
         rb.linearVelocity = new Vector2(moveX * speed, rb.linearVelocity.y);
         currentHorizontalSpeed = rb.linearVelocity.x;
 
-        bool canMove = moveX != 0;
-        bool isOnGround = jump != null && jump.IsGrounded;
-
-        if (canMove && isOnGround)
+        if (moveX != 0)
         {
             LastDirection = moveX;
             spriteRenderer.flipX = moveX < 0;
+        }
 
+        bool isOnGround = jump != null && jump.IsGrounded;
+        if (moveX != 0 && isOnGround)
+        {
             if (footstepCoroutine == null && audioSource != null && footstepSound != null)
                 footstepCoroutine = StartCoroutine(PlayFootsteps());
         }
@@ -68,8 +77,6 @@ public class MovementComponent : MonoBehaviour
                 footstepCoroutine = null;
             }
         }
-
-        lastMoveX = moveX;
     }
 
 

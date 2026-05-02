@@ -1,8 +1,11 @@
 using UnityEngine;
+using static Unity.Collections.AllocatorManager;
 
 public class PlayerAttackComponent : MonoBehaviour
 {
     [SerializeField] private KeyCode attackKey = KeyCode.Mouse0;
+    [SerializeField] private KeyCode alternativeAttackKey = KeyCode.K;
+
     [SerializeField] private Attack[] attacks;
     [SerializeField] private float cooldown = 0.5f;
     [SerializeField] private float staminaCost = 20f;
@@ -16,6 +19,8 @@ public class PlayerAttackComponent : MonoBehaviour
     private int nextAttack;
     private bool isAttacking = false;
     private AudioSource audioSource;
+    private BlockComponent block;
+    private Animator animator;
 
     public bool IsAttacking => isAttacking;
 
@@ -23,6 +28,8 @@ public class PlayerAttackComponent : MonoBehaviour
     {
         stamina = GetComponent<StaminaComponent>();
         audioSource = GetComponent<AudioSource>();
+        block = GetComponent<BlockComponent>();
+        animator = GetComponent<Animator>();
         if (stamina == null)
             Debug.LogError("PlayerAttackComponent требует компонент StaminaComponent!");
 
@@ -34,7 +41,9 @@ public class PlayerAttackComponent : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(attackKey) && !isAttacking && Time.time >= lastAttackTime + cooldown)
+        bool attackPressed = Input.GetKeyDown(attackKey) || Input.GetKeyDown(alternativeAttackKey);
+
+        if (attackPressed && !isAttacking && Time.time >= lastAttackTime + cooldown)
         {
             if (!stamina.TrySpendStamina(staminaCost))
             {
@@ -44,6 +53,9 @@ public class PlayerAttackComponent : MonoBehaviour
 
             isAttacking = true;
             lastAttackTime = Time.time;
+
+            if (animator != null)
+                animator.SetTrigger("AttackTrigger");
 
             var attack = attacks[nextAttack];
             GameObject target = FindTarget(attack.AttackDistance);
@@ -57,6 +69,7 @@ public class PlayerAttackComponent : MonoBehaviour
             {
                 Debug.Log("Атака впустую (нет цели)");
             }
+
             if (audioSource != null && attackSound != null)
                 audioSource.PlayOneShot(attackSound);
 

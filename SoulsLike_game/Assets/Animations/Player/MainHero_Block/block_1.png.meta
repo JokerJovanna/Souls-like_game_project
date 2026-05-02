@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 1764ec3c66f0b594ca50cdd16ec5ceef
+guid: 592f442644b1be74cac51922db9ca63e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2839067477888741762
-    second: MainHero_Attack7_0
+      213: -8600411641421432971
+    second: block_1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,40 +96,27 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: MainHero_Attack7_0
+      name: block_1_0
       rect:
         serializedVersion: 2
-        x: 12
+        x: 0
         y: 0
-        width: 50
-        height: 47
+        width: 28
+        height: 54
       alignment: 9
-      pivot: {x: 0.45, y: 0.52}
+      pivot: {x: 0.31, y: 0.45}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e7ec31fbb2b9998d0800000000000000
-      internalID: -2839067477888741762
+      spriteID: 577f0f6dd2335a880800000000000000
+      internalID: -8600411641421432971
       vertices: []
       indices: 
       edges: []
@@ -138,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 7af4f517258f6704aa571914aeb34d6a
+    spriteID: 4da937ccfa4a92943b85b91d16b40936
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      MainHero_Attack7_0: -2839067477888741762
+      block_1_0: -8600411641421432971
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
