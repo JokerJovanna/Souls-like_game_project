@@ -91,8 +91,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 411830135
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: -6203613636466217382, guid: 4e44e4db18b7a47448c4bf28022731ab, type: 3}
@@ -120,7 +120,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 3
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -202,7 +202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9eb6d86e597a9d4d8efb766524bf3b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovementComponent
-  speed: 5
+  speed: 7
   footstepSound: {fileID: 8300000, guid: 00bc03656fe5bb646891d5065afc735d, type: 3}
   footstepInterval: 0.4
 --- !u!114 &1951438491550283601
@@ -217,7 +217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2734bbe20b0dfa641a6a9a302ba03587, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JumpComponent
-  jumpForce: 10
+  jumpForce: 15
   maxJumps: 2
   jumpCooldown: 0.2
   staminaCostJump: 20
@@ -225,7 +225,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  groundCheckRadius: 0.1
+  groundCheckRadius: 0.2
   jumpSound: {fileID: 8300000, guid: e831c67278501934f9f29ae75a70b174, type: 3}
   isGrounded: 0
 --- !u!114 &3845020702367648898
