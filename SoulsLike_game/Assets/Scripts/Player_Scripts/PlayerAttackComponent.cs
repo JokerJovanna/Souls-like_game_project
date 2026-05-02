@@ -1,20 +1,35 @@
 using UnityEngine;
+using static Unity.Collections.AllocatorManager;
 
 public class PlayerAttackComponent : MonoBehaviour
 {
-    [Header("Настройки атаки")]
     [SerializeField] private KeyCode attackKey = KeyCode.Mouse0;
-    [SerializeField] private Attack[] attacks;          // массив доступных атак (можно один)
-    [SerializeField] private float cooldown = 0.5f;     // кулдаун между атаками
-    [SerializeField] private float staminaCost = 20f;   // стоимость в выносливости
+    [SerializeField] private KeyCode alternativeAttackKey = KeyCode.K;
+
+    [SerializeField] private Attack[] attacks;
+    [SerializeField] private float cooldown = 0.5f;
+    [SerializeField] private float staminaCost = 20f;
+    [SerializeField] private float attackAngle = 120f;
+    [SerializeField] private float attackActiveDuration = 0.3f;
+
+    public AudioClip attackSound;
 
     private StaminaComponent stamina;
-    private float cooldownTimer;
+    private float lastAttackTime = -999f;   
     private int nextAttack;
+    private bool isAttacking = false;
+    private AudioSource audioSource;
+    private BlockComponent block;
+    private Animator animator;
+
+    public bool IsAttacking => isAttacking;
 
     private void Start()
     {
         stamina = GetComponent<StaminaComponent>();
+        audioSource = GetComponent<AudioSource>();
+        block = GetComponent<BlockComponent>();
+        animator = GetComponent<Animator>();
         if (stamina == null)
             Debug.LogError("PlayerAttackComponent требует компонент StaminaComponent!");
 
@@ -26,78 +41,80 @@ public class PlayerAttackComponent : MonoBehaviour
 
     private void Update()
     {
-        // Обновляем кулдаун
-        if (cooldownTimer > 0f)
-        {
-            cooldownTimer -= Time.deltaTime;
-            return;
-        }
+        bool attackPressed = Input.GetKeyDown(attackKey) || Input.GetKeyDown(alternativeAttackKey);
 
-        // Ввод атаки
-        if (Input.GetKeyDown(attackKey))
+        if (attackPressed && !isAttacking && Time.time >= lastAttackTime + cooldown)
         {
-            // Проверка выносливости
             if (!stamina.TrySpendStamina(staminaCost))
             {
                 Debug.Log("Недостаточно выносливости для атаки");
                 return;
             }
 
-            // Выбираем текущую атаку
-            var attack = attacks[nextAttack];
+            isAttacking = true;
+            lastAttackTime = Time.time;
 
-            // Ищем цель перед игроком (можно улучшить – например, лучом или круговым сканированием)
+            if (animator != null)
+                animator.SetTrigger("AttackTrigger");
+
+            var attack = attacks[nextAttack];
             GameObject target = FindTarget(attack.AttackDistance);
+
             if (target != null)
             {
                 attack.Perform(gameObject, target);
-                cooldownTimer = cooldown;
-
-                // Переключаемся на следующую атаку (если их несколько)
-                nextAttack = (nextAttack + 1) % attacks.Length;
+                Debug.Log("Атака по врагу");
             }
             else
             {
-                Debug.Log("Нет цели в радиусе атаки");
+                Debug.Log("Атака впустую (нет цели)");
             }
+
+            if (audioSource != null && attackSound != null)
+                audioSource.PlayOneShot(attackSound);
+
+            nextAttack = (nextAttack + 1) % attacks.Length;
+            Invoke(nameof(ResetAttack), attackActiveDuration);
         }
     }
 
-    /// <summary>
-    /// Поиск ближайшего врага в радиусе атаки.
-    /// Можно заменить на Physics2D.OverlapCircle, как в прошлых версиях.
-    /// </summary>
+    private void ResetAttack()
+    {
+        isAttacking = false;
+        //Debug.Log("Атака завершена, управление разблокировано");
+    }
+
+    private Vector2 GetForwardDirection()
+    {
+        var sr = GetComponent<SpriteRenderer>();
+        return (sr != null && sr.flipX) ? Vector2.left : Vector2.right;
+    }
+
     private GameObject FindTarget(float attackDistance)
     {
-        // Ищем всех врагов с компонентом HealthComponent в радиусе
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, attackDistance);
         float closestDistance = attackDistance + 1f;
         GameObject closestTarget = null;
+        Vector2 forward = GetForwardDirection();
 
         foreach (var hit in hitColliders)
         {
-            // Проверяем, есть ли у объекта компонент HealthComponent (враг)
             var health = hit.GetComponent<EnemyHealthComponent>();
-            if (health != null)
+            if (health == null) continue;
+
+            Vector2 dirToTarget = (hit.transform.position - transform.position).normalized;
+            float angle = Vector2.Angle(forward, dirToTarget);
+
+            if (angle <= attackAngle / 2f)
             {
-                float distance = Vector2.Distance(transform.position, hit.transform.position);
-                if (distance < closestDistance)
+                float dist = Vector2.Distance(transform.position, hit.transform.position);
+                if (dist < closestDistance)
                 {
-                    closestDistance = distance;
+                    closestDistance = dist;
                     closestTarget = hit.gameObject;
                 }
             }
         }
         return closestTarget;
-    }
-
-    // Визуализация радиуса атаки в редакторе (для отладки)
-    private void OnDrawGizmosSelected()
-    {
-        if (attacks != null && attacks.Length > 0 && attacks[0] != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, attacks[0].AttackDistance);
-        }
     }
 }

@@ -3,18 +3,33 @@ using UnityEngine;
 
 public class DashAttack : Attack
 {
-    [SerializeField] private float dashStartDistance = 7f;
-    [SerializeField] private float dashDistance = 15f;
-    [SerializeField] private float attackDistance = 0.2f;
-    [SerializeField] private float dashSpeed = 10f;
+    [SerializeField] private float dashStartDistance = 4f;
+    [SerializeField] private float dashDistance = 8f;
+    [SerializeField] private float attackDistance = 0.4f;
+    [SerializeField] private float dashSpeed = 20f;
     [SerializeField] private float damage = 10f;
     [SerializeField] private bool canBeBlocked = false;
 
     public override float AttackDistance => dashStartDistance;
+    public override float AttackRange => dashDistance;
+    public override bool IsPerforming => isPerforming;
+
+    private bool isPerforming;
+    private EnemySoundComponent sound;
+    private Animator animator;
+    private PlayerChaserComponent chaser;
+
+    private void Awake()
+    {
+        animator = GetComponent<Animator>();
+        sound = GetComponent<EnemySoundComponent>();
+        chaser = GetComponent<PlayerChaserComponent>();
+    }
 
     public override void Perform(GameObject attacker, GameObject target)
     {
         if (target == null) return;
+        animator.SetTrigger("isAttacking");
         StartCoroutine(DashRoutine(attacker, target));
     }
 
@@ -69,5 +84,17 @@ public class DashAttack : Attack
             damageDealt = true;
         }
         return damageDealt;
+    }
+
+    public void OnAttackStart()
+    {
+        isPerforming = true;
+        chaser.enabled = false;
+    }
+
+    public void OnAttackEnd()
+    {
+        isPerforming = false;
+        chaser.enabled = true;
     }
 }

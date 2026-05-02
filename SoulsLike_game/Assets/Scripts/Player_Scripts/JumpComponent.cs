@@ -11,17 +11,29 @@ public class JumpComponent : MonoBehaviour
     public LayerMask groundLayer;
     public float groundCheckRadius = 0.1f;
 
+    public AudioClip jumpSound;
+
     private Rigidbody2D rb;
     private StaminaComponent stamina;
+    private AudioSource audioSource;
     private int remainingJumps;
     private float nextJumpTime;
-    private bool isGrounded;
+    public bool isGrounded;
     private bool wasGrounded;
-    
+
+    public event System.Action OnJump;
+    private PlayerAttackComponent attack;
+    private BlockComponent block;
+
+    public bool IsGrounded => isGrounded;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         stamina = GetComponent<StaminaComponent>();
+        attack = GetComponent<PlayerAttackComponent>();
+        audioSource = GetComponent<AudioSource>();
+        block = GetComponent<BlockComponent>();
         remainingJumps = maxJumps;
 
         if (groundCheck == null)
@@ -35,6 +47,12 @@ public class JumpComponent : MonoBehaviour
 
     void Update()
     {
+        if ((attack != null && attack.IsAttacking) ||
+        (block != null && block.IsBlocking))
+        {
+            //Debug.Log("Jump blocked by attack");
+            return;
+        }
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 
             groundCheckRadius, groundLayer);
         if (isGrounded && !wasGrounded) remainingJumps = maxJumps;
@@ -48,6 +66,10 @@ public class JumpComponent : MonoBehaviour
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
                 remainingJumps--;
                 nextJumpTime = Time.time + jumpCooldown;
+                OnJump?.Invoke();
+
+                if (audioSource != null && jumpSound != null)
+                    audioSource.PlayOneShot(jumpSound);
             }
         }
     }
