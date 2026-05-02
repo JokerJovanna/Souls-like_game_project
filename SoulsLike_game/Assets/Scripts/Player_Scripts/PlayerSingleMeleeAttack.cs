@@ -8,6 +8,10 @@ public class PlayerSingleMeleeAttack : Attack
 
     public override float AttackDistance => attackDistance;
 
+    public override float AttackRange => attackDistance;
+
+    public override bool IsPerforming => false;
+
     public override void Perform(GameObject attacker, GameObject target)
     {
         if (target == null) return;
