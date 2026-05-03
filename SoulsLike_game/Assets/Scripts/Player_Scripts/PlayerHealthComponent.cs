@@ -92,7 +92,7 @@ public class PlayerHealthComponent : MonoBehaviour
 
         if (blockComponent != null && blockComponent.IsBlocking && attack.Attacker != null && IsTargetInFront(attack.Attacker.transform))
         {
-            if (blockComponent.IsPerfectBlock())
+            if (attack.CanBeBlocked && blockComponent.IsPerfectBlock())
             {
                 perfect = true;
                 finalDamage = 0f;
@@ -100,7 +100,7 @@ public class PlayerHealthComponent : MonoBehaviour
             }
             else
             {
-                if (stamina != null && stamina.CurrentStamina >= blockStaminaCost)
+                if (attack.CanBeBlocked && stamina != null && stamina.CurrentStamina >= blockStaminaCost)
                 {
                     stamina.TrySpendStamina(blockStaminaCost);
                     finalDamage = attack.Damage * blockDamageReduction;
