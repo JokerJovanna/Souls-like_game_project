@@ -358,7 +358,7 @@ GameObject:
   - component: {fileID: 8992287926343859457}
   - component: {fileID: 8808505634341121787}
   - component: {fileID: 6679916941316297203}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Wolf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -426,8 +426,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1841241711
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 3aa624e7e6c7ce64fa32dcbe5e2ff04f, type: 3}
@@ -547,7 +547,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.0038608313, y: 0.3748463}
+  m_Offset: {x: 0.0017289519, y: 0.37484634}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.46, y: 0.5}
@@ -557,7 +557,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.9608648, y: 1.0696926}
+  m_Size: {x: 3.6558022, y: 1.0696926}
   m_EdgeRadius: 0
 --- !u!95 &2002592907117753599
 Animator:
@@ -679,9 +679,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DashAttack
   dashStartDistance: 4
   dashDistance: 8
-  attackDistance: 0.4
+  attackDistance: 0.7
   dashSpeed: 20
-  damage: 10
+  damage: 20
   canBeBlocked: 0
 --- !u!114 &8808505634341121787
 MonoBehaviour:

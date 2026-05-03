@@ -160,6 +160,7 @@ public class PlayerHealthComponent : MonoBehaviour
 
         PotionComponent potion = GetComponent<PotionComponent>();
         if (potion != null) potion.enabled = false;
+        gameObject.SetActive(false);
     }
 
     public float CurrentHealth => currentHealth;

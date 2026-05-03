@@ -35,7 +35,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
 
         if (health != null)
         {

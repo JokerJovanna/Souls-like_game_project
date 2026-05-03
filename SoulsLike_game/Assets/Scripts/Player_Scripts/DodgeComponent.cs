@@ -17,6 +17,7 @@ public class DodgeComponent : MonoBehaviour
     private bool isDodging = false;
     private float dodgeEndTime = 0f;
     private float nextDodgeTime = 0f;
+    private float currentGravityScale;
 
 
     void Start()
@@ -26,6 +27,7 @@ public class DodgeComponent : MonoBehaviour
         movement = GetComponent<MovementComponent>();
         block = GetComponent<BlockComponent>();
         audioSource = GetComponent<AudioSource>();
+        currentGravityScale = rb.gravityScale;
     }
 
     void Update()
@@ -44,7 +46,7 @@ public class DodgeComponent : MonoBehaviour
         if (isDodging && Time.time >= dodgeEndTime)
         {
             isDodging = false;
-            rb.gravityScale = 1f;
+            rb.gravityScale = currentGravityScale;
         }
     }
 
