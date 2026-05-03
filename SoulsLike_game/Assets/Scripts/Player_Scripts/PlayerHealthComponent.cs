@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using UnityEngine.UI;
 
 public class PlayerHealthComponent : MonoBehaviour
 {
@@ -11,6 +12,10 @@ public class PlayerHealthComponent : MonoBehaviour
     private float invincibilityEndTime = 0f;
 
     public float blockDamageReduction = 0.7f;
+    public float blockAngle = 120f;
+    public float blockStaminaCost = 15f;
+
+    public float perfectBlockDamageMultiplier = 0f;
 
     public AudioClip hurtSound;   
     public AudioClip blockSound;  
@@ -20,9 +25,11 @@ public class PlayerHealthComponent : MonoBehaviour
 
     private DodgeComponent dodgeComponent;
     private BlockComponent blockComponent;
+    private StaminaComponent stamina;
     private SpriteRenderer spriteRenderer;
     private AudioSource audioSource;
     private Color originalColor;
+    private Slider healthBar; 
 
     private bool isGreen = false;
     private float greenEffectEndTime = 0f;
@@ -38,8 +45,11 @@ public class PlayerHealthComponent : MonoBehaviour
         dodgeComponent = GetComponent<DodgeComponent>();
         blockComponent = GetComponent<BlockComponent>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        stamina = GetComponent<StaminaComponent>();
         audioSource = GetComponent<AudioSource>();
         originalColor = spriteRenderer.color;
+        var healthBarObj = GameObject.FindGameObjectWithTag("PlayerHealthBar");
+        healthBar = healthBarObj.GetComponentInChildren<Slider>();
     }
 
     void Update()
@@ -67,12 +77,7 @@ public class PlayerHealthComponent : MonoBehaviour
     public void TakeDamage(AttackData attack)
     {
         if (isInvincible) return;
-
-        if (dodgeComponent != null && dodgeComponent.IsDodging)
-        {
-            Debug.Log("уклонение");
-            return;
-        }
+        if (dodgeComponent != null && dodgeComponent.IsDodging) return;
 
         if (isGreen)
         {
@@ -82,13 +87,36 @@ public class PlayerHealthComponent : MonoBehaviour
         }
 
         float finalDamage = attack.Damage;
+        bool blocked = false;
+        bool perfect = false;
 
-        if (blockComponent.IsBlocking && blockComponent != null)
+        if (blockComponent != null && blockComponent.IsBlocking && attack.Attacker != null && IsTargetInFront(attack.Attacker.transform))
         {
-            finalDamage = attack.Damage * blockDamageReduction;
-            Debug.Log($"Урон заблокирован: {attack.Damage} -> {finalDamage}");
-            if (audioSource != null && blockSound != null)
-                audioSource.PlayOneShot(blockSound);
+            if (attack.CanBeBlocked && blockComponent.IsPerfectBlock())
+            {
+                perfect = true;
+                finalDamage = 0f;
+                Debug.Log("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ! пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ.");
+            }
+            else
+            {
+                if (attack.CanBeBlocked && stamina != null && stamina.CurrentStamina >= blockStaminaCost)
+                {
+                    stamina.TrySpendStamina(blockStaminaCost);
+                    finalDamage = attack.Damage * blockDamageReduction;
+                    blocked = true;
+                    Debug.Log($"пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: {attack.Damage} -> {finalDamage}");
+                    if (audioSource != null && blockSound != null)
+                        audioSource.PlayOneShot(blockSound);
+                }
+                else
+                {
+                    finalDamage = attack.Damage;
+                    Debug.Log("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ");
+                    if (audioSource != null && hurtSound != null)
+                        audioSource.PlayOneShot(hurtSound);
+                }
+            }
         }
         else
         {
@@ -96,21 +124,35 @@ public class PlayerHealthComponent : MonoBehaviour
                 audioSource.PlayOneShot(hurtSound);
         }
 
-        currentHealth -= finalDamage;
-        OnHealthChanged?.Invoke(currentHealth, maxHealth);
-        //Debug.Log(currentHealth);
+        if (!perfect && finalDamage > 0)
+            currentHealth -= finalDamage;
+        healthBar.value = currentHealth / maxHealth;
 
-        if (spriteRenderer != null && finalDamage > 0)
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
+        if (spriteRenderer != null && finalDamage > 0 && !blocked)
             spriteRenderer.color = Color.red;
 
         isInvincible = true;
         invincibilityEndTime = Time.time + invincibilityDuration;
 
         if (currentHealth <= 0f)
-        {
-            currentHealth = 0f;
             Die();
-        }
+    }
+
+    private Vector2 GetForwardDirection()
+    {
+        var sr = GetComponent<SpriteRenderer>();
+        return (sr != null && sr.flipX) ? Vector2.left : Vector2.right;
+    }
+
+    private bool IsTargetInFront(Transform target)
+    {
+        if (target == null) return false;
+        Vector2 forward = GetForwardDirection();
+        Vector2 directionToTarget = (target.position - transform.position).normalized;
+        float angle = Vector2.Angle(forward, directionToTarget);
+        return angle <= blockAngle / 2f;
     }
 
     public void Heal(float amount)
@@ -120,6 +162,7 @@ public class PlayerHealthComponent : MonoBehaviour
         float newHealth = currentHealth + amount;
         if (newHealth > maxHealth) newHealth = maxHealth;
         currentHealth = newHealth;
+        healthBar.value = newHealth / maxHealth;
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (spriteRenderer != null)
@@ -132,7 +175,7 @@ public class PlayerHealthComponent : MonoBehaviour
 
     private void Die()
     {
-        Debug.Log("Игрок погиб");
+        Debug.Log("пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ");
         if (audioSource != null && dieSound != null)
             audioSource.PlayOneShot(dieSound);
         OnDie?.Invoke();
@@ -160,6 +203,7 @@ public class PlayerHealthComponent : MonoBehaviour
 
         PotionComponent potion = GetComponent<PotionComponent>();
         if (potion != null) potion.enabled = false;
+        gameObject.SetActive(false);
     }
 
     public float CurrentHealth => currentHealth;

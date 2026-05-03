@@ -35,6 +35,8 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        //gameObject.SetActive(false);
+
         if (health != null)
         {
             health.OnHealthChanged += (cur, max) => OnHealthChanged?.Invoke(cur, max);

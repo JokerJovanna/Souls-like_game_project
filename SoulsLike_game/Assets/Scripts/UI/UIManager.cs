@@ -120,6 +120,10 @@ namespace UI
             CloseAllWindows();
             Time.timeScale = 1f;
             _gameplayUI.Show();
+            var player = FindObjectOfType<Player>();
+            if (player != null)
+                player.gameObject.SetActive(true);
+
         }
 
         private void OpenPauseMenu()
