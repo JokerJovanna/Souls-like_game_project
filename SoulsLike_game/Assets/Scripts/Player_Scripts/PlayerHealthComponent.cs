@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using UnityEngine.UI;
 
 public class PlayerHealthComponent : MonoBehaviour
 {
@@ -23,6 +24,7 @@ public class PlayerHealthComponent : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private AudioSource audioSource;
     private Color originalColor;
+    private Slider healthBar; 
 
     private bool isGreen = false;
     private float greenEffectEndTime = 0f;
@@ -40,6 +42,8 @@ public class PlayerHealthComponent : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>();
         originalColor = spriteRenderer.color;
+        var healthBarObj = GameObject.FindGameObjectWithTag("PlayerHealthBar");
+        healthBar = healthBarObj.GetComponentInChildren<Slider>();
     }
 
     void Update()
@@ -98,7 +102,7 @@ public class PlayerHealthComponent : MonoBehaviour
 
         currentHealth -= finalDamage;
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
-        //Debug.Log(currentHealth);
+        healthBar.value = currentHealth / maxHealth;
 
         if (spriteRenderer != null && finalDamage > 0)
             spriteRenderer.color = Color.red;
@@ -120,6 +124,7 @@ public class PlayerHealthComponent : MonoBehaviour
         float newHealth = currentHealth + amount;
         if (newHealth > maxHealth) newHealth = maxHealth;
         currentHealth = newHealth;
+        healthBar.value = newHealth / maxHealth;
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (spriteRenderer != null)

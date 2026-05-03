@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class PotionComponent : MonoBehaviour
@@ -11,6 +12,7 @@ public class PotionComponent : MonoBehaviour
 
     private PlayerHealthComponent health;
     private AudioSource audioSource;
+    private TMP_Text potionCountText;
 
     public int PotionCount => potionCount;
 
@@ -18,6 +20,8 @@ public class PotionComponent : MonoBehaviour
     {
         health = GetComponent<PlayerHealthComponent>();
         audioSource = GetComponent<AudioSource>();
+        potionCountText = GetComponentInChildren<TMP_Text>();
+        potionCountText.text = potionCount.ToString();
 
         if (health == null)
             Debug.LogError("PotionComponent требует компонент PlayerHealthComponent!");
@@ -51,6 +55,7 @@ public class PotionComponent : MonoBehaviour
 
         health.Heal(healAmount);
         potionCount--;
+        potionCountText.text = potionCount.ToString();
 
         Debug.Log($"Использовано зелье. Осталось: {potionCount}. HP: {health.CurrentHealth}");
 

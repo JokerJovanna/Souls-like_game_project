@@ -1,17 +1,21 @@
 using UnityEngine;
 using System;
+using UnityEngine.UI;
 
 public class StaminaComponent : MonoBehaviour
 {
     public float maxStamina = 100f;
     public float staminaRegenRate = 20f;
     private float currentStamina;
+    private Slider staminaBar;
 
     public event Action<float, float> OnStaminaChanged;
     
     void Start()
     {
         currentStamina = maxStamina;
+        var staminaBarObj = GameObject.FindGameObjectWithTag("PlayerStaminaBar");
+        staminaBar = staminaBarObj.GetComponentInChildren<Slider>();
     }
 
     void Update()
@@ -19,6 +23,7 @@ public class StaminaComponent : MonoBehaviour
         if (currentStamina < maxStamina)
         {
             currentStamina += staminaRegenRate * Time.deltaTime;
+            staminaBar.value = currentStamina / maxStamina;
             if (currentStamina > maxStamina) currentStamina = maxStamina;
             OnStaminaChanged?.Invoke(currentStamina, maxStamina);
         }
@@ -31,6 +36,7 @@ public class StaminaComponent : MonoBehaviour
         if (currentStamina >= amount)
         {
             currentStamina -= amount;
+            staminaBar.value = currentStamina / maxStamina;
             OnStaminaChanged?.Invoke(currentStamina, maxStamina);
             return true;
         }
@@ -40,6 +46,7 @@ public class StaminaComponent : MonoBehaviour
     public void AddStamina(float amount)
     {
         currentStamina += amount;
+        staminaBar.value = currentStamina / maxStamina;
         if (currentStamina > maxStamina) currentStamina = maxStamina;
         OnStaminaChanged?.Invoke(currentStamina, maxStamina);
     }

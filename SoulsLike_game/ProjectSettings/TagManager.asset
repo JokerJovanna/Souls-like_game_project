@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 3
   tags:
   - Ground
+  - PlayerHealthBar
+  - PlayerStaminaBar
   layers:
   - Default
   - TransparentFX
@@ -53,6 +55,12 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 411830135
+    locked: 0
+  - name: StatusBar
+    uniqueID: 676833519
+    locked: 0
+  - name: StatusBarCover
+    uniqueID: 512250411
     locked: 0
   m_RenderingLayers:
   - Default
