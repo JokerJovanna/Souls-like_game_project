@@ -97,7 +97,6 @@ public class PlayerHealthComponent : MonoBehaviour
                 perfect = true;
                 finalDamage = 0f;
                 Debug.Log("��������� ����! ����� ���.");
-                if (stamina != null) stamina.AddStamina(10f);
             }
             else
             {
@@ -127,6 +126,7 @@ public class PlayerHealthComponent : MonoBehaviour
 
         if (!perfect && finalDamage > 0)
             currentHealth -= finalDamage;
+        healthBar.value = currentHealth / maxHealth;
 
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
