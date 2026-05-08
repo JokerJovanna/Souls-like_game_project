@@ -35,7 +35,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        gameObject.SetActive(false);
+        // gameObject.SetActive(false); - Вероятнее всего здесь будет конфликт, эту штуку нужно убрать (d2roman)
 
         if (health != null)
         {
