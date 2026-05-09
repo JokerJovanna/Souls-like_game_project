@@ -110,7 +110,7 @@ namespace UI
             CloseAllWindows();
             Time.timeScale = 1f;
             if (_Player)
-                _Player.gameObject.SetActive(true);
+                EnablePlayer();
             _gameplayUI.Show();
         }
 
@@ -130,7 +130,7 @@ namespace UI
             _currentState = UIState.Gameplay;
             Time.timeScale = 1f;
             if (_Player)
-                _Player.gameObject.SetActive(true);
+                EnablePlayer();
             _pauseMenu.Hide();
         }
 
@@ -169,6 +169,12 @@ namespace UI
             if (_currentState == UIState.MainMenu) _mainMenu.Show();
             // Если отменили выход из паузы - возвращаем фокус кнопкам паузы
             if (_currentState == UIState.Paused) _pauseMenu.Show();
+        }
+
+        private void EnablePlayer()
+        {
+            _Player.gameObject.SetActive(true);
+            _Player.DisableCollisionWithEnemies();
         }
     }
 }

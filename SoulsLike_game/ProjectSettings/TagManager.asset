@@ -7,6 +7,9 @@ TagManager:
   - Ground
   - PlayerHealthBar
   - PlayerStaminaBar
+  - Skeleton
+  - Wolf
+  - Enemy
   layers:
   - Default
   - TransparentFX
