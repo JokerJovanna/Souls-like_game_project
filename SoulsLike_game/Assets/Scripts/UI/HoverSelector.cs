@@ -21,11 +21,8 @@ namespace UI
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            // Убедимся, что кнопку можно выделить, и она интерактивна
-            if (_selectable != null && _selectable.interactable)
-            {
+            if (_selectable && _selectable.interactable)
                 _selectable.Select();
-            }
         }
     }
 }
