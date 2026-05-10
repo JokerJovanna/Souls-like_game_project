@@ -29,10 +29,14 @@ public class PlayerHealthComponent : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
-    private Slider healthBar; 
+    public Slider healthBar; 
 
     public event Action<float, float> OnHealthChanged;
     public event Action OnDie;
+
+    public float CurrentHealth => currentHealth;
+    public float MaxHealth => maxHealth;
+    public bool IsInvincible => isInvincible;
 
     void Start()
     {
@@ -47,8 +51,6 @@ public class PlayerHealthComponent : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         originalColor = spriteRenderer.color;
-        var healthBarObj = GameObject.FindGameObjectWithTag("PlayerHealthBar");
-        healthBar = healthBarObj.GetComponentInChildren<Slider>();
     }
 
     void Update()
@@ -108,7 +110,7 @@ public class PlayerHealthComponent : MonoBehaviour
 
     private void ProcessBlock(AttackData attack, ref float finalDamage, ref bool blocked, ref bool perfect)
     {
-        bool canBlock = blockComponent != null && blockComponent.IsBlocking &&
+        var canBlock = blockComponent != null && blockComponent.IsBlocking &&
                         attack.Attacker != null && IsTargetInFront(attack.Attacker.transform);
 
         if (!canBlock)
@@ -154,8 +156,8 @@ public class PlayerHealthComponent : MonoBehaviour
     {
         if (!perfect && finalDamage > 0)
             currentHealth -= finalDamage;
-
-        healthBar.value = currentHealth / maxHealth;
+        if (healthBar != null)
+            healthBar.value = currentHealth / maxHealth;
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
@@ -181,7 +183,7 @@ public class PlayerHealthComponent : MonoBehaviour
     {
         if (target == null) return false;
         var forward = GetForwardDirection();
-        Vector2 directionToTarget = (target.position - transform.position).normalized;
+        var directionToTarget = (target.position - transform.position).normalized;
         var angle = Vector2.Angle(forward, directionToTarget);
         return angle <= blockAngle / 2f;
     }
@@ -193,7 +195,8 @@ public class PlayerHealthComponent : MonoBehaviour
         var newHealth = currentHealth + amount;
         if (newHealth > maxHealth) newHealth = maxHealth;
         currentHealth = newHealth;
-        healthBar.value = newHealth / maxHealth;
+        if (healthBar != null)
+            healthBar.value = newHealth / maxHealth;
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (spriteRenderer != null)
@@ -234,8 +237,4 @@ public class PlayerHealthComponent : MonoBehaviour
         if (potion != null) potion.enabled = false;
         gameObject.SetActive(false);
     }
-
-    public float CurrentHealth => currentHealth;
-    public float MaxHealth => maxHealth;
-    public bool IsInvincible => isInvincible;
 }

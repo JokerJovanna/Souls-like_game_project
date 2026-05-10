@@ -14,19 +14,16 @@ public class PotionComponent : MonoBehaviour
     public AudioClip useSound;
     public AudioClip noPotionSound;
 
-    private TMP_Text potionCountText;
+    public TMP_Text potionCountText;
 
     public int PotionCount => potionCount;
 
     void Start()
     {
         health = GetComponent<PlayerHealthComponent>();
-
         audioSource = GetComponent<AudioSource>();
-
-        potionCountText = GetComponentInChildren<TMP_Text>();
-
-        potionCountText.text = potionCount.ToString();
+        if (potionCountText != null)
+            potionCountText.text = potionCount.ToString();
     }
 
     void Update()
@@ -48,7 +45,8 @@ public class PotionComponent : MonoBehaviour
 
         health.Heal(healAmount);
         potionCount--;
-        potionCountText.text = potionCount.ToString();
+        if (potionCountText != null)
+            potionCountText.text = potionCount.ToString();
 
         if (audioSource != null && useSound != null) audioSource.PlayOneShot(useSound);
     }

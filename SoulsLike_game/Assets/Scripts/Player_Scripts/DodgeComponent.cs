@@ -21,6 +21,8 @@ public class DodgeComponent : MonoBehaviour
 
     private Rigidbody2D rb;
 
+    public bool IsDodging => isDodging;
+
     void Start()
     {
         stamina = GetComponent<StaminaComponent>();
@@ -53,14 +55,7 @@ public class DodgeComponent : MonoBehaviour
 
     void Dodge()
     {
-        var direction = 0f;
-        if (Input.GetKey(KeyCode.A)) direction = -1f;
-        if (Input.GetKey(KeyCode.D)) direction = 1f;
-
-        if (direction == 0f && movement != null) direction = movement.LastDirection;
-
-        if (direction == 0f) direction = 1f;
-
+        var direction = GetDirection();
         var dodgeDirection = new Vector2(direction, 0).normalized;
 
         isDodging = true;
@@ -77,5 +72,14 @@ public class DodgeComponent : MonoBehaviour
         if (audioSource != null && dodgeSound != null) audioSource.PlayOneShot(dodgeSound);
     }
 
-    public bool IsDodging => isDodging;
+    private float GetDirection()
+    {
+        var direction = 0f;
+        if (Input.GetKey(KeyCode.A)) direction = -1f;
+        if (Input.GetKey(KeyCode.D)) direction = 1f;
+        if (direction == 0f && movement != null) direction = movement.LastDirection;
+        if (direction == 0f) direction = 1f;
+
+        return direction;
+    }
 }

@@ -74,7 +74,7 @@ public class PlayerAttackComponent : MonoBehaviour
 
     public Vector2 GetForwardDirection()
     {
-        Vector2 right = transform.right;
+        var right = transform.right;
         var sr = GetComponent<SpriteRenderer>();
         if (sr != null && sr.flipX) right = -right;
         return right.normalized;
@@ -93,7 +93,7 @@ public class PlayerAttackComponent : MonoBehaviour
             var health = hit.GetComponent<EnemyHealthComponent>();
             if (health == null) continue;
 
-            Vector2 dirToTarget = (hit.transform.position - transform.position).normalized;
+            var dirToTarget = (hit.transform.position - transform.position).normalized;
             var angle = Vector2.Angle(forward, dirToTarget);
             if (angle > halfAngle) continue;
 
