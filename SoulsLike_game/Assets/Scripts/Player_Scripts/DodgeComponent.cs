@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class DodgeComponent : MonoBehaviour
 {
-    public float dodgeDistance = 3f;
-    public float dodgeDuration = 0.2f;
-    public float dodgeCooldown = 1f;
-    public float staminaCostDodge = 30f;
+    [SerializeField] private float dodgeDistance = 3f;
+    [SerializeField] private float dodgeDuration = 0.2f;
+    [SerializeField] private float dodgeCooldown = 1f;
+    [SerializeField] private float staminaCostDodge = 30f;
 
     private bool isDodging = false;
     private float dodgeEndTime = 0f;
@@ -17,9 +17,10 @@ public class DodgeComponent : MonoBehaviour
     private BlockComponent block;
 
     private AudioSource audioSource;
-    public AudioClip dodgeSound;
+    [SerializeField] private AudioClip dodgeSound;
 
     private Rigidbody2D rb;
+    private Animator animator;
 
     public bool IsDodging => isDodging;
 
@@ -32,6 +33,7 @@ public class DodgeComponent : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
 
         currentGravityScale = rb.gravityScale;
     }
@@ -50,6 +52,7 @@ public class DodgeComponent : MonoBehaviour
         {
             isDodging = false;
             rb.gravityScale = currentGravityScale;
+            animator.SetBool("IsDodging", false);
         }
     }
 
@@ -70,6 +73,8 @@ public class DodgeComponent : MonoBehaviour
         if (sr != null) sr.flipX = direction < 0;
 
         if (audioSource != null && dodgeSound != null) audioSource.PlayOneShot(dodgeSound);
+
+        animator.SetBool("IsDodging", true);
     }
 
     private float GetDirection()

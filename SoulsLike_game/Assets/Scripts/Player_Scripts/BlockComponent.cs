@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class BlockComponent : MonoBehaviour
 {
-    public KeyCode blockKey = KeyCode.Mouse1;
-    public KeyCode alternativeBlockKey = KeyCode.L;
+    [SerializeField] private KeyCode blockKey = KeyCode.Mouse1;
+    [SerializeField] private KeyCode alternativeBlockKey = KeyCode.L;
 
-    public float perfectBlockWindow = 0.2f;
-    public bool resetVelocityOnBlockStart = true; 
+    [SerializeField] private float perfectBlockWindow = 0.2f;
+    [SerializeField] private bool resetVelocityOnBlockStart = true; 
 
     private bool isBlocking = false;
     private bool wasBlocking = false;
@@ -16,7 +16,7 @@ public class BlockComponent : MonoBehaviour
     private DodgeComponent dodge;
 
     private AudioSource audioSource;
-    public AudioClip perfectBlockSound;
+    [SerializeField] private AudioClip perfectBlockSound;
 
     private Animator animator;
     private Rigidbody2D rb;

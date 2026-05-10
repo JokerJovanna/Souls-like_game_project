@@ -7,7 +7,7 @@ public class PlayerAttackComponent : MonoBehaviour
     [SerializeField] private Attack[] attacks;
     [SerializeField] private float cooldown = 0.5f;
     [SerializeField] private float staminaCost = 20f;
-    [SerializeField] private float attackAngle = 90f;
+    [SerializeField] private float attackAngle = 240f;
     [SerializeField] private float attackActiveDuration = 0.3f;
 
     private float lastAttackTime = -999f;
@@ -18,7 +18,7 @@ public class PlayerAttackComponent : MonoBehaviour
     private BlockComponent block;
     private StaminaComponent stamina;
 
-    public AudioClip attackSound;
+    [SerializeField] private AudioClip attackSound;
     private AudioSource audioSource;
 
     private Animator animator;
@@ -105,5 +105,22 @@ public class PlayerAttackComponent : MonoBehaviour
             }
         }
         return closestTarget;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Vector2 origin = transform.position;
+        var forward = GetForwardDirection();
+        var halfAngle = attackAngle * 0.5f;
+        var radius = 1.5f;
+
+        var leftRot = Quaternion.Euler(0, 0, -halfAngle);
+        var rightRot = Quaternion.Euler(0, 0, halfAngle);
+        Vector2 leftDir = leftRot * forward;
+        Vector2 rightDir = rightRot * forward;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(origin, leftDir * radius);
+        Gizmos.DrawRay(origin, rightDir * radius);
     }
 }

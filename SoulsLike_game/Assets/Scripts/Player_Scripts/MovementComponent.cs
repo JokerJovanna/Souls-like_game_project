@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class MovementComponent : MonoBehaviour
 {
-    public float speed = 5f;
-    public float footstepInterval = 0.4f;
+    [SerializeField] private float speed = 5f;
+    [SerializeField] private float footstepInterval = 0.4f;
 
     private float currentHorizontalSpeed;
 
@@ -14,11 +14,12 @@ public class MovementComponent : MonoBehaviour
     private BlockComponent block;
 
     private AudioSource audioSource;
-    public AudioClip footstepSound;
+    [SerializeField] private AudioClip footstepSound;
 
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
     private Coroutine footstepCoroutine;
+    private Animator animator;
 
     public float HorizontalSpeed => Mathf.Abs(currentHorizontalSpeed);
     public float LastDirection { get; private set; } = 1f;
@@ -34,6 +35,7 @@ public class MovementComponent : MonoBehaviour
 
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
     }
 
     void FixedUpdate()
@@ -48,6 +50,8 @@ public class MovementComponent : MonoBehaviour
         ApplyMovement(moveX);
         UpdateSpriteDirection(moveX);
         HandleFootsteps(moveX);
+
+        animator.SetFloat("Speed", HorizontalSpeed);
     }
 
     private bool IsMovementLocked()
