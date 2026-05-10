@@ -5,34 +5,31 @@ using UnityEngine.UI;
 public class PlayerHealthComponent : MonoBehaviour
 {
     public float maxHealth = 100f;
-    private float currentHealth;
-
     public float invincibilityDuration = 1f;
-    private bool isInvincible = false;
-    private float invincibilityEndTime = 0f;
-
     public float blockDamageReduction = 0.7f;
     public float blockAngle = 120f;
     public float blockStaminaCost = 15f;
-
     public float perfectBlockDamageMultiplier = 0f;
-
-    public AudioClip hurtSound;   
-    public AudioClip blockSound;  
-    public AudioClip dieSound;
-
     public float greenEffectDuration = 0.2f;
+
+    private float currentHealth;
+    private bool isInvincible = false;
+    private float invincibilityEndTime = 0f;
+    private bool isGreen = false;
+    private float greenEffectEndTime = 0f;
 
     private DodgeComponent dodgeComponent;
     private BlockComponent blockComponent;
     private StaminaComponent stamina;
-    private SpriteRenderer spriteRenderer;
+
     private AudioSource audioSource;
+    public AudioClip hurtSound;
+    public AudioClip blockSound;
+    public AudioClip dieSound;
+
+    private SpriteRenderer spriteRenderer;
     private Color originalColor;
     private Slider healthBar; 
-
-    private bool isGreen = false;
-    private float greenEffectEndTime = 0f;
 
     public event Action<float, float> OnHealthChanged;
     public event Action OnDie;
@@ -46,7 +43,9 @@ public class PlayerHealthComponent : MonoBehaviour
         blockComponent = GetComponent<BlockComponent>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         stamina = GetComponent<StaminaComponent>();
+
         audioSource = GetComponent<AudioSource>();
+
         originalColor = spriteRenderer.color;
         var healthBarObj = GameObject.FindGameObjectWithTag("PlayerHealthBar");
         healthBar = healthBarObj.GetComponentInChildren<Slider>();
@@ -57,8 +56,7 @@ public class PlayerHealthComponent : MonoBehaviour
         if (isInvincible && Time.time >= invincibilityEndTime)
         {
             isInvincible = false;
-            if (spriteRenderer != null && !isGreen)
-                spriteRenderer.color = originalColor;
+            if (spriteRenderer != null && !isGreen) spriteRenderer.color = originalColor;
         }
 
         if (isGreen && Time.time >= greenEffectEndTime)
@@ -66,78 +64,111 @@ public class PlayerHealthComponent : MonoBehaviour
             isGreen = false;
             if (spriteRenderer != null)
             {
-                if (isInvincible)
-                    spriteRenderer.color = Color.red;
-                else
-                    spriteRenderer.color = originalColor;
+                if (isInvincible) spriteRenderer.color = Color.red;
+                else spriteRenderer.color = originalColor;
             }
         }
     }
 
     public void TakeDamage(AttackData attack)
     {
-        if (isInvincible) return;
-        if (dodgeComponent != null && dodgeComponent.IsDodging) return;
+        if (ShouldIgnoreDamage()) return;
 
+        ResetGreenEffect();
+
+        float finalDamage = attack.Damage;
+        bool blocked = false;
+        bool perfect = false;
+
+        ProcessBlock(attack, ref finalDamage, ref blocked, ref perfect);
+
+        ApplyDamage(finalDamage, perfect);
+        ApplyVisualEffects(finalDamage, blocked);
+        ActivateInvincibility();
+
+        if (currentHealth <= 0f) Die();
+    }
+
+    private bool ShouldIgnoreDamage()
+    {
+        if (isInvincible) return true;
+        if (dodgeComponent != null && dodgeComponent.IsDodging) return true;
+        return false;
+    }
+
+    private void ResetGreenEffect()
+    {
         if (isGreen)
         {
             isGreen = false;
             if (spriteRenderer != null && !isInvincible)
                 spriteRenderer.color = originalColor;
         }
+    }
 
-        float finalDamage = attack.Damage;
-        bool blocked = false;
-        bool perfect = false;
+    private void ProcessBlock(AttackData attack, ref float finalDamage, ref bool blocked, ref bool perfect)
+    {
+        bool canBlock = blockComponent != null && blockComponent.IsBlocking &&
+                        attack.Attacker != null && IsTargetInFront(attack.Attacker.transform);
 
-        if (blockComponent != null && blockComponent.IsBlocking && attack.Attacker != null && IsTargetInFront(attack.Attacker.transform))
+        if (!canBlock)
         {
-            if (attack.CanBeBlocked && blockComponent.IsPerfectBlock())
-            {
-                perfect = true;
-                finalDamage = 0f;
-                Debug.Log("��������� ����! ����� ���.");
-            }
-            else
-            {
-                if (attack.CanBeBlocked && stamina != null && stamina.CurrentStamina >= blockStaminaCost)
-                {
-                    stamina.TrySpendStamina(blockStaminaCost);
-                    finalDamage = attack.Damage * blockDamageReduction;
-                    blocked = true;
-                    Debug.Log($"���� ������������: {attack.Damage} -> {finalDamage}");
-                    if (audioSource != null && blockSound != null)
-                        audioSource.PlayOneShot(blockSound);
-                }
-                else
-                {
-                    finalDamage = attack.Damage;
-                    Debug.Log("������������ ������������ ��� �����");
-                    if (audioSource != null && hurtSound != null)
-                        audioSource.PlayOneShot(hurtSound);
-                }
-            }
+            PlayHurtSound();
+            return;
+        }
+
+        if (attack.CanBeBlocked && blockComponent.IsPerfectBlock())
+        {
+            perfect = true;
+            finalDamage = 0f;
+            return;
+        }
+
+        if (attack.CanBeBlocked && stamina != null && stamina.CurrentStamina >= blockStaminaCost)
+        {
+            stamina.TrySpendStamina(blockStaminaCost);
+            finalDamage = attack.Damage * blockDamageReduction;
+            blocked = true;
+            PlayBlockSound();
         }
         else
         {
-            if (audioSource != null && hurtSound != null)
-                audioSource.PlayOneShot(hurtSound);
+            finalDamage = attack.Damage;
+            PlayHurtSound();
         }
+    }
 
+    private void PlayHurtSound()
+    {
+        if (audioSource != null && hurtSound != null)
+            audioSource.PlayOneShot(hurtSound);
+    }
+
+    private void PlayBlockSound()
+    {
+        if (audioSource != null && blockSound != null)
+            audioSource.PlayOneShot(blockSound);
+    }
+
+    private void ApplyDamage(float finalDamage, bool perfect)
+    {
         if (!perfect && finalDamage > 0)
             currentHealth -= finalDamage;
+
         healthBar.value = currentHealth / maxHealth;
-
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
 
+    private void ApplyVisualEffects(float finalDamage, bool blocked)
+    {
         if (spriteRenderer != null && finalDamage > 0 && !blocked)
             spriteRenderer.color = Color.red;
+    }
 
+    private void ActivateInvincibility()
+    {
         isInvincible = true;
         invincibilityEndTime = Time.time + invincibilityDuration;
-
-        if (currentHealth <= 0f)
-            Die();
     }
 
     private Vector2 GetForwardDirection()
@@ -149,9 +180,9 @@ public class PlayerHealthComponent : MonoBehaviour
     private bool IsTargetInFront(Transform target)
     {
         if (target == null) return false;
-        Vector2 forward = GetForwardDirection();
+        var forward = GetForwardDirection();
         Vector2 directionToTarget = (target.position - transform.position).normalized;
-        float angle = Vector2.Angle(forward, directionToTarget);
+        var angle = Vector2.Angle(forward, directionToTarget);
         return angle <= blockAngle / 2f;
     }
 
@@ -159,7 +190,7 @@ public class PlayerHealthComponent : MonoBehaviour
     {
         if (currentHealth <= 0f) return;
 
-        float newHealth = currentHealth + amount;
+        var newHealth = currentHealth + amount;
         if (newHealth > maxHealth) newHealth = maxHealth;
         currentHealth = newHealth;
         healthBar.value = newHealth / maxHealth;
@@ -175,9 +206,7 @@ public class PlayerHealthComponent : MonoBehaviour
 
     private void Die()
     {
-        Debug.Log("����� �����");
-        if (audioSource != null && dieSound != null)
-            audioSource.PlayOneShot(dieSound);
+        if (audioSource != null && dieSound != null) audioSource.PlayOneShot(dieSound);
         OnDie?.Invoke();
 
         SpriteRenderer sr = GetComponent<SpriteRenderer>();

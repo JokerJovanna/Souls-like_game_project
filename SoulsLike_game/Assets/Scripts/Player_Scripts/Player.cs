@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
     private PlayerHealthComponent health;
     private BlockComponent block;
 
+    private Animator animator;
+
     public float CurrentHealth => health != null ? health.CurrentHealth : 0;
     public float MaxHealth => health != null ? health.MaxHealth : 0;
     public float CurrentStamina => stamina != null ? stamina.CurrentStamina : 0;
@@ -19,8 +21,6 @@ public class Player : MonoBehaviour
     public event System.Action<float, float> OnHealthChanged;
     public event System.Action<float, float> OnStaminaChanged;
     public event System.Action OnDie;
-    public event System.Action OnHealPotionCountChanged;
-    private Animator animator;
 
     void Awake()
     {
@@ -30,13 +30,12 @@ public class Player : MonoBehaviour
         stamina = GetComponent<StaminaComponent>();
         health = GetComponent<PlayerHealthComponent>();
         block = GetComponent<BlockComponent>();
+
         animator = GetComponent<Animator>();
     }
 
     void Start()
     {
-        //gameObject.SetActive(false);
-
         if (health != null)
         {
             health.OnHealthChanged += (cur, max) => OnHealthChanged?.Invoke(cur, max);
@@ -46,24 +45,16 @@ public class Player : MonoBehaviour
         {
             stamina.OnStaminaChanged += (cur, max) => OnStaminaChanged?.Invoke(cur, max);
         }
-        if (jump != null)
-        {
-            jump.OnJump += () => animator?.SetTrigger("JumpTrigger");
-        }
+        if (jump != null) jump.OnJump += () => animator?.SetTrigger("JumpTrigger");
     }
 
     void Update()
     {
         if (animator == null) return;
+        var speedValue = movement != null ? movement.HorizontalSpeed : 0f;
 
-        float speedValue = movement != null ? movement.HorizontalSpeed : 0f;
         animator.SetFloat("Speed", speedValue);
         animator.SetBool("IsGrounded", jump != null && jump.IsGrounded);
         animator.SetBool("IsDodging", IsDodging);
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            animator.SetTrigger("AttackTrigger");
-        }
     }
 }

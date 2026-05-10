@@ -6,25 +6,28 @@ public class BlockComponent : MonoBehaviour
     public KeyCode alternativeBlockKey = KeyCode.L;
 
     public float perfectBlockWindow = 0.2f;
-    public AudioClip perfectBlockSound;
-
     public bool resetVelocityOnBlockStart = true; 
 
     private bool isBlocking = false;
+    private bool wasBlocking = false;
     private bool justBlockedPerfect = false;
     private float lastBlockPressTime = -999f;
 
-    private Animator animator;
     private DodgeComponent dodge;
+
     private AudioSource audioSource;
+    public AudioClip perfectBlockSound;
+
+    private Animator animator;
     private Rigidbody2D rb;
-    private bool wasBlocking = false;
 
     void Start()
     {
-        animator = GetComponent<Animator>();
         dodge = GetComponent<DodgeComponent>();
+
         audioSource = GetComponent<AudioSource>();
+
+        animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -41,7 +44,7 @@ public class BlockComponent : MonoBehaviour
             return;
         }
 
-        bool blockingNow = Input.GetKey(blockKey) || Input.GetKey(alternativeBlockKey);
+        var blockingNow = Input.GetKey(blockKey) || Input.GetKey(alternativeBlockKey);
 
         if (blockingNow && !wasBlocking)
         {
@@ -62,10 +65,9 @@ public class BlockComponent : MonoBehaviour
 
     public bool IsPerfectBlock()
     {
-        if (!isBlocking) return false;
-        if (justBlockedPerfect) return false;
+        if (!isBlocking || justBlockedPerfect) return false;
 
-        bool perfect = (Time.time - lastBlockPressTime) <= perfectBlockWindow;
+        var perfect = (Time.time - lastBlockPressTime) <= perfectBlockWindow;
         if (perfect)
         {
             justBlockedPerfect = true;

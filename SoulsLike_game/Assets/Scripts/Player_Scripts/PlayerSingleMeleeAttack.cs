@@ -1,6 +1,4 @@
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class PlayerSingleMeleeAttack : Attack
 {
@@ -9,10 +7,10 @@ public class PlayerSingleMeleeAttack : Attack
     [SerializeField] private float attackDistance = 1.5f;
 
     public override float AttackDistance => attackDistance;
-
     public override float AttackRange => attackDistance;
-
     public override bool IsPerforming => false;
+
+    private Vector2 attackDirectionAtPerform;
 
     private GameObject attacker;
     private GameObject target;
@@ -22,13 +20,30 @@ public class PlayerSingleMeleeAttack : Attack
         if (target == null) return;
         this.attacker = attacker;
         this.target = target;
+
+        var attackComp = attacker.GetComponent<PlayerAttackComponent>();
+        if (attackComp != null) attackDirectionAtPerform = attackComp.GetForwardDirection();
+        else attackDirectionAtPerform = Vector2.right;
     }
 
     private void OnHit()
     {
-        if (attacker == null) return;
-        if (target == null) return;
-        // У врага должен быть компонент HealthComponent (или любой другой с TakeDamage(AttackData))
+        if (attacker == null || target == null) return;
+
+        var attackComp = attacker.GetComponent<PlayerAttackComponent>();
+        Vector2 toTarget = (target.transform.position - attacker.transform.position).normalized;
+
+        if (attackComp != null)
+        {
+            var currentForward = attackComp.GetForwardDirection();
+            var angle = Vector2.Angle(currentForward, toTarget);
+            if (angle > attackComp.AttackAngle / 2f) return;
+        }
+        else
+        {
+            if (Vector2.Dot(attackDirectionAtPerform, toTarget) < 0.5f) return;
+        }
+
         var healthComponent = target.GetComponent<EnemyHealthComponent>();
         if (healthComponent == null) return;
 

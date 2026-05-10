@@ -6,15 +6,18 @@ public class StaminaComponent : MonoBehaviour
 {
     public float maxStamina = 100f;
     public float staminaRegenRate = 20f;
+    public event Action<float, float> OnStaminaChanged;
+
     private float currentStamina;
+
     private Slider staminaBar;
 
-    public event Action<float, float> OnStaminaChanged;
-    
     void Start()
     {
         currentStamina = maxStamina;
+
         var staminaBarObj = GameObject.FindGameObjectWithTag("PlayerStaminaBar");
+
         staminaBar = staminaBarObj.GetComponentInChildren<Slider>();
     }
 
@@ -27,8 +30,6 @@ public class StaminaComponent : MonoBehaviour
             if (currentStamina > maxStamina) currentStamina = maxStamina;
             OnStaminaChanged?.Invoke(currentStamina, maxStamina);
         }
-
-        //Debug.Log(currentStamina);
     }
 
     public bool TrySpendStamina(float amount)
