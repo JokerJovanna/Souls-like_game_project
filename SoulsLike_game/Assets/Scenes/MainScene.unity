@@ -604,6 +604,7 @@ GameObject:
   m_Component:
   - component: {fileID: 111920076}
   - component: {fileID: 111920077}
+  - component: {fileID: 111920078}
   m_Layer: 8
   m_Name: Background
   m_TagString: Untagged
@@ -620,8 +621,8 @@ Transform:
   m_GameObject: {fileID: 111920075}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.5119629, y: -15.223648, z: 10}
-  m_LocalScale: {x: 3.358776, y: 3.3874733, z: 1.0132456}
+  m_LocalPosition: {x: -0.2899933, y: -16.47, z: 10}
+  m_LocalScale: {x: 3.6561985, y: 2.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1474868598}
@@ -685,6 +686,18 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &111920078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 111920075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd53e014139e49e478f4624a7925ce55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BackgroundScaler
 --- !u!1001 &114241975
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2243,10 +2256,10 @@ RectTransform:
   - {fileID: 656582958}
   m_Father: {fileID: 34650528}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -236.5, y: 110.9}
-  m_SizeDelta: {x: 143, y: 30}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 99, y: -61.5}
+  m_SizeDelta: {x: 143, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &756256782
 MonoBehaviour:
@@ -5534,10 +5547,10 @@ RectTransform:
   - {fileID: 1287823855}
   m_Father: {fileID: 34650528}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -236.5, y: 146}
-  m_SizeDelta: {x: 143, y: 30}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 99, y: -26.5}
+  m_SizeDelta: {x: 143, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1822733870
 MonoBehaviour:
@@ -5586,7 +5599,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 1
+  m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
