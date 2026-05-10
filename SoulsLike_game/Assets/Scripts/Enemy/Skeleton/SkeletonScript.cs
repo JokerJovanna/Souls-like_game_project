@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class SkeletonScript : MonoBehaviour
 {
-    private EnemyHealthComponent health;
     private AttackComponent attack;
     private PatrolComponent patrol;
     private PlayerChaserComponent chaser;
@@ -11,12 +10,10 @@ public class SkeletonScript : MonoBehaviour
 
     void Awake()
     {
-        health = GetComponent<EnemyHealthComponent>();
         attack = GetComponent<AttackComponent>();
         patrol = GetComponent<PatrolComponent>();
         chaser = GetComponent<PlayerChaserComponent>();
         detector = GetComponent<PlayerDetectorComponent>();
-        if (health == null) Debug.LogError("HealthComponent missing");
         if (attack == null) Debug.LogError("AttackComponent missing");
         if (patrol == null) Debug.LogError("PatrolComponent missing");
         if (chaser == null) Debug.LogError("PlayerChaserComponent missing");
@@ -53,7 +50,6 @@ public class SkeletonScript : MonoBehaviour
 
     private void InitializeComponents()
     {
-        health.enabled = true;
         attack.enabled = true;
         patrol.enabled = true;
         chaser.enabled = true;
