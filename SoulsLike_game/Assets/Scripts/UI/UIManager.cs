@@ -12,6 +12,7 @@ namespace UI
         [SerializeField] private ConfirmationWindow _confirmationMenu;
         [SerializeField] private Sprite _mainMenuExitBackground;
         [SerializeField] private Player _Player;
+        [SerializeField] private MusicManager _backgroundMusic;
 
         private enum UIState
         {
@@ -32,6 +33,7 @@ namespace UI
         {
             if (_Player)
                 _Player.gameObject.SetActive(false);
+
             OpenMainMenu();
         }
 
@@ -108,6 +110,7 @@ namespace UI
             if (_Player)
                 EnablePlayer();
             _gameplayUI.Show();
+            _backgroundMusic.Play();
         }
 
         private void OpenPauseMenu()
@@ -118,6 +121,7 @@ namespace UI
             if (_Player)
                 _Player.gameObject.SetActive(false);
             _pauseMenu.Show();
+            _backgroundMusic.SetVolume(_backgroundMusic.PauseVolume);
         }
 
         private void ResumeGame()
@@ -128,6 +132,7 @@ namespace UI
             if (_Player)
                 EnablePlayer();
             _pauseMenu.Hide();
+            _backgroundMusic.SetVolume(_backgroundMusic.MainVolume);
         }
 
         private void RequestExitToMainMenu()

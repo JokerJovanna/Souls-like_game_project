@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Rendering;
+using static UnityEngine.GraphicsBuffer;
 
 public class PatrolComponent : MonoBehaviour
 {
@@ -37,6 +38,7 @@ public class PatrolComponent : MonoBehaviour
     {
         if (isWaiting)
         {
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
             animator.SetBool("isMoving", false);
             WaitOrPickNext();
             return;
@@ -65,13 +67,12 @@ public class PatrolComponent : MonoBehaviour
     private void MoveTowardsTarget()
     {
         animator.SetBool("isMoving", true);
-        var nextPos = transform.position;
-        nextPos.x = points[nextPoint].position.x;
-        var newPos = Vector2.MoveTowards(transform.position, nextPos, speed * Time.fixedDeltaTime);
-
+        var nextPos = points[nextPoint].position;
+        var direction = Mathf.Sign(points[nextPoint].position.x - transform.position.x);
+        
         if (nextPos.x - transform.position.x != 0)
             sprite.flipX = (nextPos.x - transform.position.x) > 0;
 
-        rb.MovePosition(newPos);
+        rb.linearVelocity = new Vector2(direction * speed, rb.linearVelocity.y);
     }
 }

@@ -14,7 +14,6 @@ public class SingleMeleeAttack : Attack
     private Animator animator;
     private PlayerChaserComponent chaser;
     private SpriteRenderer sprite;
-    private EnemySoundComponent sound;
     private GameObject currentTarget;
     private GameObject currentAttacker;
     private bool isPerforming;
@@ -24,7 +23,6 @@ public class SingleMeleeAttack : Attack
         animator = GetComponent<Animator>();
         chaser = GetComponent<PlayerChaserComponent>();
         sprite = GetComponent<SpriteRenderer>();
-        sound = GetComponent<EnemySoundComponent>();
     }
 
     public override void Perform(GameObject attacker, GameObject target)

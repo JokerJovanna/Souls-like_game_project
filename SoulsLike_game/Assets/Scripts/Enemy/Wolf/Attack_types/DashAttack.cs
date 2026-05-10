@@ -15,14 +15,12 @@ public class DashAttack : Attack
     public override bool IsPerforming => isPerforming;
 
     private bool isPerforming;
-    private EnemySoundComponent sound;
     private Animator animator;
     private PlayerChaserComponent chaser;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
-        sound = GetComponent<EnemySoundComponent>();
         chaser = GetComponent<PlayerChaserComponent>();
     }
 

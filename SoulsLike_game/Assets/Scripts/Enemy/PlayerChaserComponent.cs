@@ -20,6 +20,7 @@ public class PlayerChaserComponent : MonoBehaviour
     public void ClearTarget()
     {
         target = null;
+        rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
 
     private void Awake()
@@ -33,19 +34,20 @@ public class PlayerChaserComponent : MonoBehaviour
     {
         if (target == null) return;
 
-        var nextPos = target.transform.position;
-        nextPos.y = transform.position.y;
         if (Vector2.Distance(target.position, transform.position) > StopDistance)
         {
             animator.SetBool("isMoving", true);
-            var newPosition = Vector2.MoveTowards(transform.position, nextPos, speed * Time.fixedDeltaTime);
-            rb.MovePosition(newPosition);
 
-            var direction = target.position.x - transform.position.x;
+            var direction = Mathf.Sign(target.position.x - transform.position.x);
+            rb.linearVelocity = new Vector2(direction * speed, rb.linearVelocity.y);
+
             if (direction != 0)
                 sprite.flipX = direction > 0;
         }
         else
+        {
             animator.SetBool("isMoving", false);
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+        } 
     }
 }
