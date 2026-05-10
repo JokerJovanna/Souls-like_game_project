@@ -9,8 +9,8 @@ namespace UI
         [SerializeField] private TMP_Text _text;
 
         [Header("Настройки")]
-        [SerializeField] private KeyCode[] _keys;          // какие клавиши переключают сообщения
-        [SerializeField] private string[] _messages;      // шаблоны подсказок
+        [SerializeField] private KeyCode[] _keys;
+        [SerializeField] private string[] _messages;
 
         private int _current = 0;
         private bool _visible = false;
@@ -21,7 +21,7 @@ namespace UI
                 _messages = new[] { "Press <b>Space</b> to jump.", "Press <b>WASD</b> to move.", "Enjoy the game!" };
             if (_keys == null || _keys.Length == 0)
                 _keys = new[] { KeyCode.Space };
-            Hide(); // по умолчанию скрыто
+            Hide();
         }
 
         private void Update()

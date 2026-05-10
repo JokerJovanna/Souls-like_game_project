@@ -12,15 +12,21 @@ namespace UI
         [SerializeField] private ConfirmationWindow _confirmationMenu;
         [SerializeField] private Sprite _mainMenuExitBackground;
         [SerializeField] private Player _Player;
-        private enum UIState { MainMenu, Gameplay, Paused, Confirmation }
+
+        private enum UIState
+        {
+            MainMenu,
+            Gameplay,
+            Paused,
+            Confirmation
+        }
+
         private UIState _currentState;
-        private UIState _previousState; // Храним предыдущее состояние для возврата(ESC)
-        private GameObject _lastSelectedGameObject; // Сохраняем последний выбранный (фокусный) элемент интерфейса
+        private UIState _previousState;
+        private GameObject _lastSelectedGameObject;
 
         private void Awake()
-        {
-            SubscribeToEvents();
-        }
+            => SubscribeToEvents();
 
         private void Start()
         {
@@ -32,29 +38,21 @@ namespace UI
         private void Update()
         {
             EnsureUISelection();
-
-            // Возвращаем старую систему ввода - слушаем кнопку ESC!
             if (Input.GetKeyDown(KeyCode.Escape))
-            {
                 HandleEscapeNavigation();
-            }
         }
 
         private void EnsureUISelection()
         {
             if (!EventSystem.current) return;
-
-            // Обновляем ссылку, если игрок выбрал новый элемент интерфейса.
             if (EventSystem.current.currentSelectedGameObject)
                 _lastSelectedGameObject = EventSystem.current.currentSelectedGameObject;
-            // Если игрок кликнул мимо кнопок (пустое место), возвращаем фокус на последний выделенный элемент.
             else if (_lastSelectedGameObject && _lastSelectedGameObject.activeInHierarchy)
                 EventSystem.current.SetSelectedGameObject(_lastSelectedGameObject);
         }
 
         private void HandleEscapeNavigation()
         {
-            // Навигация назад (ESC) зависит от текущего открытого окна
             if (_currentState == UIState.Gameplay)
                 OpenPauseMenu();
             else if (_currentState == UIState.Paused)
@@ -64,15 +62,13 @@ namespace UI
         }
 
         private void OnDestroy()
-        {
-            UnsubscribeFromEvents();
-        }
+            => UnsubscribeFromEvents();
 
         private void SubscribeToEvents()
         {
             _mainMenu.OnPlayClicked += StartGame;
             _mainMenu.OnExitClicked += RequestExitFromApp;
-            
+
             _pauseMenu.OnContinueClicked += ResumeGame;
             _pauseMenu.OnMainMenuClicked += RequestExitToMainMenu;
         }
@@ -136,7 +132,7 @@ namespace UI
 
         private void RequestExitToMainMenu()
         {
-            _previousState = _currentState; // Запоминаем, что мы были в паузе
+            _previousState = _currentState;
             _currentState = UIState.Confirmation;
             _confirmationMenu.Show(
                 onConfirm: OpenMainMenu,
@@ -146,7 +142,7 @@ namespace UI
 
         private void RequestExitFromApp()
         {
-            _previousState = _currentState; // Запоминаем, что мы были в меню
+            _previousState = _currentState;
             _currentState = UIState.Confirmation;
             _confirmationMenu.Show(
                 onConfirm: () =>
@@ -163,11 +159,8 @@ namespace UI
 
         private void RestoreStateAfterConfirmation()
         {
-            // Возвращаемся в состояние, из которого вызвали confirmation
             _currentState = _previousState;
-            // Если отменили выход из главного меню - возвращаем фокус кнопкам меню
             if (_currentState == UIState.MainMenu) _mainMenu.Show();
-            // Если отменили выход из паузы - возвращаем фокус кнопкам паузы
             if (_currentState == UIState.Paused) _pauseMenu.Show();
         }
     }
