@@ -3,18 +3,18 @@ using UnityEngine;
 
 public class PotionComponent : MonoBehaviour
 {
-    public KeyCode useKey = KeyCode.H;   
-    
-    public int potionCount = 3;                 
-    public int healAmount = 50;                         
+    [SerializeField] private KeyCode useKey = KeyCode.H;
+
+    [SerializeField] private int potionCount = 3;
+    [SerializeField] private int healAmount = 50;                         
 
     private PlayerHealthComponent health;
 
     private AudioSource audioSource;
-    public AudioClip useSound;
-    public AudioClip noPotionSound;
+    [SerializeField] private AudioClip useSound;
+    [SerializeField] private AudioClip noPotionSound;
 
-    public TMP_Text potionCountText;
+    [SerializeField] private TMP_Text potionCountText;
 
     public int PotionCount => potionCount;
 

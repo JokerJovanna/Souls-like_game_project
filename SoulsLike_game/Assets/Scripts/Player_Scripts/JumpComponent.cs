@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class JumpComponent : MonoBehaviour
 {
-    public bool isGrounded;
-    public int maxJumps = 2;
-    public float jumpForce = 10f;
-    public float jumpCooldown = 0.2f;
-    public float staminaCostJump = 20f;
-    public float groundCheckRadius = 0.1f;
+    [SerializeField] private bool isGrounded;
+    [SerializeField] private int maxJumps = 2;
+    [SerializeField] private float jumpForce = 10f;
+    [SerializeField] private float jumpCooldown = 0.2f;
+    [SerializeField] private float staminaCostJump = 20f;
+    [SerializeField] private float groundCheckRadius = 0.1f;
 
     private bool wasGrounded;
     private int remainingJumps;
@@ -17,12 +17,13 @@ public class JumpComponent : MonoBehaviour
     private PlayerAttackComponent attack;
     private BlockComponent block;
 
-    public AudioClip jumpSound;
+    [SerializeField] private AudioClip jumpSound;
     private AudioSource audioSource;
 
     private Rigidbody2D rb;
-    public Transform groundCheck;
-    public LayerMask groundLayer;
+    private Animator animator;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private LayerMask groundLayer;
 
     public event System.Action OnJump;
 
@@ -37,6 +38,7 @@ public class JumpComponent : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
 
         remainingJumps = maxJumps;
 
@@ -67,7 +69,10 @@ public class JumpComponent : MonoBehaviour
                 OnJump?.Invoke();
 
                 if (audioSource != null && jumpSound != null) audioSource.PlayOneShot(jumpSound);
+                animator.SetTrigger("JumpTrigger");
             }
         }
+
+        animator.SetBool("IsGrounded", isGrounded);
     }
 }

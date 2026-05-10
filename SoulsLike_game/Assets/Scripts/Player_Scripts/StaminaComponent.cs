@@ -4,13 +4,13 @@ using UnityEngine.UI;
 
 public class StaminaComponent : MonoBehaviour
 {
-    public float maxStamina = 100f;
-    public float staminaRegenRate = 20f;
+    [SerializeField] private float maxStamina = 100f;
+    [SerializeField] private float staminaRegenRate = 20f;
     public event Action<float, float> OnStaminaChanged;
 
     private float currentStamina;
 
-    public Slider staminaBar;
+    [SerializeField] private Slider staminaBar;
 
     public float CurrentStamina => currentStamina;
     public float MaxStamina => maxStamina;
@@ -25,8 +25,7 @@ public class StaminaComponent : MonoBehaviour
         if (currentStamina < maxStamina)
         {
             currentStamina += staminaRegenRate * Time.deltaTime;
-            if (staminaBar != null)
-                staminaBar.value = currentStamina / maxStamina;
+            if (staminaBar != null) staminaBar.value = currentStamina / maxStamina;
             if (currentStamina > maxStamina) currentStamina = maxStamina;
             OnStaminaChanged?.Invoke(currentStamina, maxStamina);
         }
@@ -37,8 +36,7 @@ public class StaminaComponent : MonoBehaviour
         if (currentStamina >= amount)
         {
             currentStamina -= amount;
-            if (staminaBar != null)
-                staminaBar.value = currentStamina / maxStamina;
+            if (staminaBar != null) staminaBar.value = currentStamina / maxStamina;
             OnStaminaChanged?.Invoke(currentStamina, maxStamina);
             return true;
         }
@@ -48,8 +46,7 @@ public class StaminaComponent : MonoBehaviour
     public void AddStamina(float amount)
     {
         currentStamina += amount;
-        if (staminaBar != null)
-            staminaBar.value = currentStamina / maxStamina;
+        if (staminaBar != null) staminaBar.value = currentStamina / maxStamina;
         if (currentStamina > maxStamina) currentStamina = maxStamina;
         OnStaminaChanged?.Invoke(currentStamina, maxStamina);
     }

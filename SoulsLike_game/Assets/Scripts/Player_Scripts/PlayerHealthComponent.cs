@@ -4,13 +4,13 @@ using UnityEngine.UI;
 
 public class PlayerHealthComponent : MonoBehaviour
 {
-    public float maxHealth = 100f;
-    public float invincibilityDuration = 1f;
-    public float blockDamageReduction = 0.7f;
-    public float blockAngle = 120f;
-    public float blockStaminaCost = 15f;
-    public float perfectBlockDamageMultiplier = 0f;
-    public float greenEffectDuration = 0.2f;
+    [SerializeField] private float maxHealth = 100f;
+    [SerializeField] private float invincibilityDuration = 1f;
+    [SerializeField] private float blockDamageReduction = 0.7f;
+    [SerializeField] private float blockAngle = 120f;
+    [SerializeField] private float blockStaminaCost = 15f;
+    [SerializeField] private float perfectBlockDamageMultiplier = 0f;
+    [SerializeField] private float greenEffectDuration = 0.2f;
 
     private float currentHealth;
     private bool isInvincible = false;
@@ -23,13 +23,13 @@ public class PlayerHealthComponent : MonoBehaviour
     private StaminaComponent stamina;
 
     private AudioSource audioSource;
-    public AudioClip hurtSound;
-    public AudioClip blockSound;
-    public AudioClip dieSound;
+    [SerializeField] private AudioClip hurtSound;
+    [SerializeField] private AudioClip blockSound;
+    [SerializeField] private AudioClip dieSound;
 
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
-    public Slider healthBar; 
+    [SerializeField] private Slider healthBar; 
 
     public event Action<float, float> OnHealthChanged;
     public event Action OnDie;

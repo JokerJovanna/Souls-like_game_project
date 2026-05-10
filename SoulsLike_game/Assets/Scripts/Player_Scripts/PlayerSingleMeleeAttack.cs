@@ -30,18 +30,15 @@ public class PlayerSingleMeleeAttack : Attack
     {
         if (attacker == null || target == null) return;
 
-        var attackComp = attacker.GetComponent<PlayerAttackComponent>();
-        var toTarget = (target.transform.position - attacker.transform.position).normalized;
+        var distance = Vector2.Distance(attacker.transform.position, target.transform.position);
+        if (distance > AttackDistance) return;
 
+        var attackComp = attacker.GetComponent<PlayerAttackComponent>();
         if (attackComp != null)
         {
-            var currentForward = attackComp.GetForwardDirection();
-            var angle = Vector2.Angle(currentForward, toTarget);
+            Vector2 toTarget = (target.transform.position - attacker.transform.position).normalized;
+            var angle = Vector2.Angle(attackComp.GetForwardDirection(), toTarget);
             if (angle > attackComp.AttackAngle / 2f) return;
-        }
-        else
-        {
-            if (Vector2.Dot(attackDirectionAtPerform, toTarget) < 0.5f) return;
         }
 
         var healthComponent = target.GetComponent<EnemyHealthComponent>();
