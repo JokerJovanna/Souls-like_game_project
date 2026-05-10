@@ -21,6 +21,8 @@ public class BlockComponent : MonoBehaviour
     private Animator animator;
     private Rigidbody2D rb;
 
+    public bool IsBlocking => isBlocking;
+
     void Start()
     {
         dodge = GetComponent<DodgeComponent>();
@@ -76,6 +78,4 @@ public class BlockComponent : MonoBehaviour
         }
         return perfect;
     }
-
-    public bool IsBlocking => isBlocking;
 }

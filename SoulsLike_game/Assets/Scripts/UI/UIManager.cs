@@ -10,73 +10,59 @@ namespace UI
         [SerializeField] private GameplayWindow _gameplayUI;
         [SerializeField] private PauseMenuWindow _pauseMenu;
         [SerializeField] private ConfirmationWindow _confirmationMenu;
-        // Background sprites for different confirmation windows
         [SerializeField] private Sprite _mainMenuExitBackground;
-        [SerializeField] private Sprite _appExitBackground;
-        private enum UIState { MainMenu, Gameplay, Paused, Confirmation }
+        [SerializeField] private Player _Player;
+
+        private enum UIState
+        {
+            MainMenu,
+            Gameplay,
+            Paused,
+            Confirmation
+        }
+
         private UIState _currentState;
-        private UIState _previousState; // Храним предыдущее состояние для возврата(ESC)
-        private GameObject _lastSelectedGameObject; // Сохраняем последний выбранный (фокусный) элемент интерфейса
+        private UIState _previousState;
+        private GameObject _lastSelectedGameObject;
 
         private void Awake()
-        {
-            SubscribeToEvents();
-        }
+            => SubscribeToEvents();
 
         private void Start()
         {
+            if (_Player)
+                _Player.gameObject.SetActive(false);
             OpenMainMenu();
         }
 
         private void Update()
         {
             EnsureUISelection();
-
-            // Возвращаем старую систему ввода - слушаем кнопку ESC!
             if (Input.GetKeyDown(KeyCode.Escape))
-            {
                 HandleEscapeNavigation();
-            }
         }
 
         private void EnsureUISelection()
         {
-            if (EventSystem.current == null) return;
-
-            // Обновляем ссылку, если игрок выбрал новый элемент интерфейса.
-            if (EventSystem.current.currentSelectedGameObject != null)
-            {
+            if (!EventSystem.current) return;
+            if (EventSystem.current.currentSelectedGameObject)
                 _lastSelectedGameObject = EventSystem.current.currentSelectedGameObject;
-            }
-            // Если игрок кликнул мимо кнопок (пустое место), возвращаем фокус на последний выделенный элемент.
-            else if (_lastSelectedGameObject != null && _lastSelectedGameObject.activeInHierarchy)
-            {
+            else if (_lastSelectedGameObject && _lastSelectedGameObject.activeInHierarchy)
                 EventSystem.current.SetSelectedGameObject(_lastSelectedGameObject);
-            }
         }
 
         private void HandleEscapeNavigation()
         {
-            // Навигация назад (ESC) зависит от текущего открытого окна
             if (_currentState == UIState.Gameplay)
-            {
                 OpenPauseMenu();
-            }
             else if (_currentState == UIState.Paused)
-            {
                 ResumeGame();
-            }
             else if (_currentState == UIState.Confirmation)
-            {
-                // Имитируем нажатие "НЕТ", окно закроется и само вызовет возврат
                 _confirmationMenu.CallCancel();
-            }
         }
 
         private void OnDestroy()
-        {
-            UnsubscribeFromEvents();
-        }
+            => UnsubscribeFromEvents();
 
         private void SubscribeToEvents()
         {
@@ -119,11 +105,9 @@ namespace UI
             _currentState = UIState.Gameplay;
             CloseAllWindows();
             Time.timeScale = 1f;
+            if (_Player)
+                EnablePlayer();
             _gameplayUI.Show();
-            var player = FindObjectOfType<Player>();
-            if (player != null)
-                player.gameObject.SetActive(true);
-
         }
 
         private void OpenPauseMenu()
@@ -131,6 +115,8 @@ namespace UI
             _previousState = _currentState;
             _currentState = UIState.Paused;
             Time.timeScale = 0f;
+            if (_Player)
+                _Player.gameObject.SetActive(false);
             _pauseMenu.Show();
         }
 
@@ -139,16 +125,16 @@ namespace UI
             _previousState = _currentState;
             _currentState = UIState.Gameplay;
             Time.timeScale = 1f;
+            if (_Player)
+                EnablePlayer();
             _pauseMenu.Hide();
         }
 
         private void RequestExitToMainMenu()
         {
-            _previousState = _currentState; // Запоминаем, что мы были в паузе
+            _previousState = _currentState;
             _currentState = UIState.Confirmation;
             _confirmationMenu.Show(
-                // "Выйти в главное меню без сохранения?",
-                "",
                 onConfirm: OpenMainMenu,
                 onCancel: RestoreStateAfterConfirmation,
                 background: _mainMenuExitBackground);
@@ -156,11 +142,9 @@ namespace UI
 
         private void RequestExitFromApp()
         {
-            _previousState = _currentState; // Запоминаем, что мы были в меню
+            _previousState = _currentState;
             _currentState = UIState.Confirmation;
             _confirmationMenu.Show(
-                // "Вы уверены что хотите выйти?",
-                "",
                 onConfirm: () =>
                 {
 #if UNITY_EDITOR
@@ -170,19 +154,20 @@ namespace UI
 #endif
                 },
                 onCancel: RestoreStateAfterConfirmation,
-                background: _appExitBackground);
+                background: _mainMenuExitBackground);
         }
 
         private void RestoreStateAfterConfirmation()
         {
-            // Возвращаемся в состояние, из которого вызвали confirmation
             _currentState = _previousState;
-            
-            // Если отменили выход из главного меню - возвращаем фокус кнопкам меню
             if (_currentState == UIState.MainMenu) _mainMenu.Show();
-            
-            // Если отменили выход из паузы - возвращаем фокус кнопкам паузы
             if (_currentState == UIState.Paused) _pauseMenu.Show();
+        }
+
+        private void EnablePlayer()
+        {
+            _Player.gameObject.SetActive(true);
+            _Player.DisableCollisionWithEnemies();
         }
     }
 }

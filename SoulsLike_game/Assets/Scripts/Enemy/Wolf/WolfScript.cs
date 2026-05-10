@@ -25,12 +25,6 @@ public class WolfScript : MonoBehaviour
     void Start()
     {
         InitializeComponents();
-        DisableCollisionWithPlayer();
-    }
-
-    void Update()
-    {
-
     }
 
     public void OnPlayerDetected(GameObject player)
@@ -40,7 +34,7 @@ public class WolfScript : MonoBehaviour
         attack.SetTarget(player);
     }
 
-    public void OnPlayerLost(GameObject player)
+    public void OnPlayerLost()
     {
         patrol.enabled = true;
         chaser.ClearTarget();
@@ -66,38 +60,5 @@ public class WolfScript : MonoBehaviour
 
         detector.OnPlayerDetected += OnPlayerDetected;
         detector.OnPlayerLost += OnPlayerLost;
-    }
-
-    private Collider2D GetEnemyCollider()
-    {
-        var enemyNormalCollider = GetComponent<Collider2D>();
-        if (enemyNormalCollider != null && enemyNormalCollider.isTrigger)
-        {
-            // Если случайно получили триггер, ищем другой коллайдер
-            Collider2D[] colliders = GetComponents<Collider2D>();
-            foreach (var col in colliders)
-            {
-                if (!col.isTrigger)
-                {
-                    enemyNormalCollider = col;
-                    break;
-                }
-            }
-        }
-        return enemyNormalCollider;
-    }
-
-    private void DisableCollisionWithPlayer()
-    {
-        var enemyCol = GetEnemyCollider();
-        var player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
-        {
-            Collider2D playerCollider = player.GetComponent<Collider2D>();
-            if (playerCollider != null && enemyCol != null)
-            {
-                Physics2D.IgnoreCollision(playerCollider, enemyCol, true);
-            }
-        }
     }
 }

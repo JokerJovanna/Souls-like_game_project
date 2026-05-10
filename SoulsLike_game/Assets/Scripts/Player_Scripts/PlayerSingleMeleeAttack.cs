@@ -31,7 +31,7 @@ public class PlayerSingleMeleeAttack : Attack
         if (attacker == null || target == null) return;
 
         var attackComp = attacker.GetComponent<PlayerAttackComponent>();
-        Vector2 toTarget = (target.transform.position - attacker.transform.position).normalized;
+        var toTarget = (target.transform.position - attacker.transform.position).normalized;
 
         if (attackComp != null)
         {
