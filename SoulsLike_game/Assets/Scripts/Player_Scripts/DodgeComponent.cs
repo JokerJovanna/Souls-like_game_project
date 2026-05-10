@@ -2,31 +2,39 @@ using UnityEngine;
 
 public class DodgeComponent : MonoBehaviour
 {
-    public float dodgeDistance = 3f;
-    public float dodgeDuration = 0.2f;
-    public float dodgeCooldown = 1f;
-    public float staminaCostDodge = 30f;
+    [SerializeField] private float dodgeDistance = 3f;
+    [SerializeField] private float dodgeDuration = 0.2f;
+    [SerializeField] private float dodgeCooldown = 1f;
+    [SerializeField] private float staminaCostDodge = 30f;
 
-    public AudioClip dodgeSound;
-
-    private Rigidbody2D rb;
-    private StaminaComponent stamina;
-    private MovementComponent movement;
-    private BlockComponent block;
-    private AudioSource audioSource;
     private bool isDodging = false;
     private float dodgeEndTime = 0f;
     private float nextDodgeTime = 0f;
     private float currentGravityScale;
 
+    private StaminaComponent stamina;
+    private MovementComponent movement;
+    private BlockComponent block;
+
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip dodgeSound;
+
+    private Rigidbody2D rb;
+    private Animator animator;
+
+    public bool IsDodging => isDodging;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
         stamina = GetComponent<StaminaComponent>();
         movement = GetComponent<MovementComponent>();
         block = GetComponent<BlockComponent>();
+
         audioSource = GetComponent<AudioSource>();
+
+        rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+
         currentGravityScale = rb.gravityScale;
     }
 
@@ -34,49 +42,49 @@ public class DodgeComponent : MonoBehaviour
     {
         if (block != null && block.IsBlocking) return;
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && !isDodging && 
-            Time.time >= nextDodgeTime)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !isDodging && Time.time >= nextDodgeTime &&
+            stamina.TrySpendStamina(staminaCostDodge))
         {
-            if (stamina.TrySpendStamina(staminaCostDodge))
-            {
-                Dodge();
-            }
+            Dodge();
         }
 
         if (isDodging && Time.time >= dodgeEndTime)
         {
             isDodging = false;
             rb.gravityScale = currentGravityScale;
+            animator.SetBool("IsDodging", false);
         }
     }
 
     void Dodge()
     {
-        float direction = 0f;
-        if (Input.GetKey(KeyCode.A)) direction = -1f;
-        if (Input.GetKey(KeyCode.D)) direction = 1f;
-
-        if (direction == 0f && movement != null)
-            direction = movement.LastDirection;
-
-        if (direction == 0f) direction = 1f;
-
-        Vector2 dodgeDirection = new Vector2(direction, 0).normalized;
+        var direction = GetDirection();
+        var dodgeDirection = new Vector2(direction, 0).normalized;
 
         isDodging = true;
         dodgeEndTime = Time.time + dodgeDuration;
         nextDodgeTime = Time.time + dodgeCooldown;
 
         rb.gravityScale = 0f;
-        float dodgeSpeed = dodgeDistance / dodgeDuration;
+        var dodgeSpeed = dodgeDistance / dodgeDuration;
         rb.linearVelocity = dodgeDirection * dodgeSpeed;
 
-        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        var sr = GetComponent<SpriteRenderer>();
         if (sr != null) sr.flipX = direction < 0;
 
-        if (audioSource != null && dodgeSound != null)
-            audioSource.PlayOneShot(dodgeSound);
+        if (audioSource != null && dodgeSound != null) audioSource.PlayOneShot(dodgeSound);
+
+        animator.SetBool("IsDodging", true);
     }
 
-    public bool IsDodging => isDodging;
+    private float GetDirection()
+    {
+        var direction = 0f;
+        if (Input.GetKey(KeyCode.A)) direction = -1f;
+        if (Input.GetKey(KeyCode.D)) direction = 1f;
+        if (direction == 0f && movement != null) direction = movement.LastDirection;
+        if (direction == 0f) direction = 1f;
+
+        return direction;
+    }
 }

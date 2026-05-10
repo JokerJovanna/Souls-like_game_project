@@ -28,9 +28,8 @@ namespace UI
 
         [SerializeField] private Image _backgroundImage;
 
-        public void Show(string message, Action onConfirm, Action onCancel, Sprite background = null)
+        public void Show(Action onConfirm, Action onCancel, Sprite background = null)
         {
-            _messageText.text = message;
             _onConfirm = onConfirm;
             _onCancel = onCancel;
             SetBackground(background);

@@ -2,29 +2,34 @@ using UnityEngine;
 
 public class BlockComponent : MonoBehaviour
 {
-    public KeyCode blockKey = KeyCode.Mouse1;
-    public KeyCode alternativeBlockKey = KeyCode.L;
+    [SerializeField] private KeyCode blockKey = KeyCode.Mouse1;
+    [SerializeField] private KeyCode alternativeBlockKey = KeyCode.L;
 
-    public float perfectBlockWindow = 0.2f;
-    public AudioClip perfectBlockSound;
-
-    public bool resetVelocityOnBlockStart = true; 
+    [SerializeField] private float perfectBlockWindow = 0.2f;
+    [SerializeField] private bool resetVelocityOnBlockStart = true; 
 
     private bool isBlocking = false;
+    private bool wasBlocking = false;
     private bool justBlockedPerfect = false;
     private float lastBlockPressTime = -999f;
 
-    private Animator animator;
     private DodgeComponent dodge;
+
     private AudioSource audioSource;
+    [SerializeField] private AudioClip perfectBlockSound;
+
+    private Animator animator;
     private Rigidbody2D rb;
-    private bool wasBlocking = false;
+
+    public bool IsBlocking => isBlocking;
 
     void Start()
     {
-        animator = GetComponent<Animator>();
         dodge = GetComponent<DodgeComponent>();
+
         audioSource = GetComponent<AudioSource>();
+
+        animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -41,7 +46,7 @@ public class BlockComponent : MonoBehaviour
             return;
         }
 
-        bool blockingNow = Input.GetKey(blockKey) || Input.GetKey(alternativeBlockKey);
+        var blockingNow = Input.GetKey(blockKey) || Input.GetKey(alternativeBlockKey);
 
         if (blockingNow && !wasBlocking)
         {
@@ -62,10 +67,9 @@ public class BlockComponent : MonoBehaviour
 
     public bool IsPerfectBlock()
     {
-        if (!isBlocking) return false;
-        if (justBlockedPerfect) return false;
+        if (!isBlocking || justBlockedPerfect) return false;
 
-        bool perfect = (Time.time - lastBlockPressTime) <= perfectBlockWindow;
+        var perfect = (Time.time - lastBlockPressTime) <= perfectBlockWindow;
         if (perfect)
         {
             justBlockedPerfect = true;
@@ -74,6 +78,4 @@ public class BlockComponent : MonoBehaviour
         }
         return perfect;
     }
-
-    public bool IsBlocking => isBlocking;
 }

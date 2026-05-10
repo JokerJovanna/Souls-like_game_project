@@ -7,6 +7,9 @@ TagManager:
   - Ground
   - PlayerHealthBar
   - PlayerStaminaBar
+  - Skeleton
+  - Wolf
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -17,7 +20,7 @@ TagManager:
   - Player
   - Enemy
   - Background
-  - 
+  - Boss
   - 
   - 
   - 
@@ -46,6 +49,9 @@ TagManager:
     locked: 0
   - name: Background
     uniqueID: 555874073
+    locked: 0
+  - name: BackgroundObject
+    uniqueID: 1728591063
     locked: 0
   - name: Ground
     uniqueID: 3593023609

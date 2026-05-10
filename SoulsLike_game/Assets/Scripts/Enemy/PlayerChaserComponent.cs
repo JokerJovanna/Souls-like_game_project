@@ -6,6 +6,7 @@ public class PlayerChaserComponent : MonoBehaviour
     [SerializeField] private float speed = 5f;
     public float StopDistance = 1.5f;
 
+    private Rigidbody2D rb;
     private SpriteRenderer sprite;
     private Transform target;
     private Animator animator;
@@ -19,32 +20,34 @@ public class PlayerChaserComponent : MonoBehaviour
     public void ClearTarget()
     {
         target = null;
+        rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
 
     private void Awake()
     {
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (target == null) return;
 
-        var nextPos = target.transform.position;
-        nextPos.y = transform.position.y;
         if (Vector2.Distance(target.position, transform.position) > StopDistance)
         {
             animator.SetBool("isMoving", true);
-            var newPosition = Vector2.MoveTowards(transform.position, nextPos, speed * Time.deltaTime);
-            transform.position = newPosition;
 
-            var direction = target.position.x - transform.position.x;
+            var direction = Mathf.Sign(target.position.x - transform.position.x);
+            rb.linearVelocity = new Vector2(direction * speed, rb.linearVelocity.y);
+
             if (direction != 0)
                 sprite.flipX = direction > 0;
         }
         else
+        {
             animator.SetBool("isMoving", false);
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+        } 
     }
 }

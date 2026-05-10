@@ -1,101 +1,116 @@
 using System.Collections;
 using UnityEngine;
-using static Unity.Collections.AllocatorManager;
 
 public class MovementComponent : MonoBehaviour
 {
-    public float speed = 5f;
-    public AudioClip footstepSound;
-    public float footstepInterval = 0.4f;
-
-    private Rigidbody2D rb;
-    private DodgeComponent dodge;
-    private SpriteRenderer spriteRenderer;
-    private PlayerAttackComponent attack;
-    private JumpComponent jump;
-    private BlockComponent block;
-    private AudioSource audioSource;
+    [SerializeField] private float speed = 5f;
+    [SerializeField] private float footstepInterval = 0.4f;
 
     private float currentHorizontalSpeed;
-    private float lastMoveX = 0f;
+
+    private DodgeComponent dodge;
+    private JumpComponent jump;
+    private BlockComponent block;
+
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip footstepSound;
+
+    private SpriteRenderer spriteRenderer;
+    private Rigidbody2D rb;
     private Coroutine footstepCoroutine;
+    private Animator animator;
 
     public float HorizontalSpeed => Mathf.Abs(currentHorizontalSpeed);
     public float LastDirection { get; private set; } = 1f;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
         dodge = GetComponent<DodgeComponent>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        attack = GetComponent<PlayerAttackComponent>();
-        audioSource = GetComponent<AudioSource>();
         jump = GetComponent<JumpComponent>();
         block = GetComponent<BlockComponent>();
+
+        audioSource = GetComponent<AudioSource>();
+
+        rb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
     }
 
     void FixedUpdate()
     {
-        if ((dodge != null && dodge.IsDodging) ||
-            (attack != null && attack.IsAttacking) ||
-            (block != null && block.IsBlocking))
+        if (IsMovementLocked())
         {
-            if (footstepCoroutine != null)
-            {
-                StopCoroutine(footstepCoroutine);
-                footstepCoroutine = null;
-            }
+            StopFootsteps();
             return;
         }
 
-        float moveX = 0f;
-        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
-            moveX = -1f;
-        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
-            moveX = 1f;
+        var moveX = GetMoveInput();
+        ApplyMovement(moveX);
+        UpdateSpriteDirection(moveX);
+        HandleFootsteps(moveX);
 
+        animator.SetFloat("Speed", HorizontalSpeed);
+    }
+
+    private bool IsMovementLocked()
+    {
+        return (dodge != null && dodge.IsDodging) ||
+               (block != null && block.IsBlocking);
+    }
+
+    private float GetMoveInput()
+    {
+        var move = 0f;
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) move = -1f;
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) move = 1f;
+        return move;
+    }
+
+    private void ApplyMovement(float moveX)
+    {
         rb.linearVelocity = new Vector2(moveX * speed, rb.linearVelocity.y);
         currentHorizontalSpeed = rb.linearVelocity.x;
+        LastDirection = moveX != 0 ? moveX : LastDirection;
+    }
 
-        if (moveX != 0)
-        {
-            LastDirection = moveX;
-            spriteRenderer.flipX = moveX < 0;
-        }
+    private void UpdateSpriteDirection(float moveX)
+    {
+        if (moveX != 0) spriteRenderer.flipX = moveX < 0;
+    }
 
-        bool isOnGround = jump != null && jump.IsGrounded;
-        if (moveX != 0 && isOnGround)
+    private void HandleFootsteps(float moveX)
+    {
+        var isOnGround = jump != null && jump.IsGrounded;
+        var shouldPlayFootsteps = moveX != 0 && isOnGround;
+
+        if (shouldPlayFootsteps && footstepCoroutine == null && audioSource != null && 
+            footstepSound != null)
+            footstepCoroutine = StartCoroutine(PlayFootsteps());
+        else if (!shouldPlayFootsteps && footstepCoroutine != null) StopFootsteps();
+    }
+
+    private void StopFootsteps()
+    {
+        if (footstepCoroutine != null)
         {
-            if (footstepCoroutine == null && audioSource != null && footstepSound != null)
-                footstepCoroutine = StartCoroutine(PlayFootsteps());
-        }
-        else
-        {
-            if (footstepCoroutine != null)
-            {
-                StopCoroutine(footstepCoroutine);
-                footstepCoroutine = null;
-            }
+            StopCoroutine(footstepCoroutine);
+            footstepCoroutine = null;
         }
     }
 
-
     private IEnumerator PlayFootsteps()
     {
-        if (jump != null && jump.IsGrounded)
-            audioSource.PlayOneShot(footstepSound);
+        if (jump != null && jump.IsGrounded) audioSource.PlayOneShot(footstepSound);
 
         while (true)
         {
             yield return new WaitForSeconds(footstepInterval);
 
-            bool stillOnGround = jump != null && jump.IsGrounded;
-            bool stillMoving = Mathf.Abs(rb.linearVelocity.x) > 0.1f;
+            var stillOnGround = jump != null && jump.IsGrounded;
+            var stillMoving = Mathf.Abs(rb.linearVelocity.x) > 0.1f;
 
-            if (stillOnGround && stillMoving)
-                audioSource.PlayOneShot(footstepSound);
-            else
-                break;
+            if (stillOnGround && stillMoving) audioSource.PlayOneShot(footstepSound);
+            else break;
         }
         footstepCoroutine = null;
     }

@@ -4,18 +4,20 @@ using UnityEngine.UI;
 
 public class StaminaComponent : MonoBehaviour
 {
-    public float maxStamina = 100f;
-    public float staminaRegenRate = 20f;
-    private float currentStamina;
-    private Slider staminaBar;
-
+    [SerializeField] private float maxStamina = 100f;
+    [SerializeField] private float staminaRegenRate = 20f;
     public event Action<float, float> OnStaminaChanged;
-    
+
+    private float currentStamina;
+
+    [SerializeField] private Slider staminaBar;
+
+    public float CurrentStamina => currentStamina;
+    public float MaxStamina => maxStamina;
+
     void Start()
     {
         currentStamina = maxStamina;
-        var staminaBarObj = GameObject.FindGameObjectWithTag("PlayerStaminaBar");
-        staminaBar = staminaBarObj.GetComponentInChildren<Slider>();
     }
 
     void Update()
@@ -23,12 +25,10 @@ public class StaminaComponent : MonoBehaviour
         if (currentStamina < maxStamina)
         {
             currentStamina += staminaRegenRate * Time.deltaTime;
-            staminaBar.value = currentStamina / maxStamina;
+            if (staminaBar != null) staminaBar.value = currentStamina / maxStamina;
             if (currentStamina > maxStamina) currentStamina = maxStamina;
             OnStaminaChanged?.Invoke(currentStamina, maxStamina);
         }
-
-        //Debug.Log(currentStamina);
     }
 
     public bool TrySpendStamina(float amount)
@@ -36,7 +36,7 @@ public class StaminaComponent : MonoBehaviour
         if (currentStamina >= amount)
         {
             currentStamina -= amount;
-            staminaBar.value = currentStamina / maxStamina;
+            if (staminaBar != null) staminaBar.value = currentStamina / maxStamina;
             OnStaminaChanged?.Invoke(currentStamina, maxStamina);
             return true;
         }
@@ -46,11 +46,8 @@ public class StaminaComponent : MonoBehaviour
     public void AddStamina(float amount)
     {
         currentStamina += amount;
-        staminaBar.value = currentStamina / maxStamina;
+        if (staminaBar != null) staminaBar.value = currentStamina / maxStamina;
         if (currentStamina > maxStamina) currentStamina = maxStamina;
         OnStaminaChanged?.Invoke(currentStamina, maxStamina);
     }
-
-    public float CurrentStamina => currentStamina;
-    public float MaxStamina => maxStamina;
 }

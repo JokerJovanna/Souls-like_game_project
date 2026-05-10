@@ -1,6 +1,4 @@
 using UnityEngine;
-using static Unity.Collections.AllocatorManager;
-
 public class PlayerAttackComponent : MonoBehaviour
 {
     [SerializeField] private KeyCode attackKey = KeyCode.Mouse0;
@@ -9,69 +7,60 @@ public class PlayerAttackComponent : MonoBehaviour
     [SerializeField] private Attack[] attacks;
     [SerializeField] private float cooldown = 0.5f;
     [SerializeField] private float staminaCost = 20f;
-    [SerializeField] private float attackAngle = 120f;
+    [SerializeField] private float attackAngle = 240f;
     [SerializeField] private float attackActiveDuration = 0.3f;
 
-    public AudioClip attackSound;
-
-    private StaminaComponent stamina;
-    private float lastAttackTime = -999f;   
+    private float lastAttackTime = -999f;
+    private int lastAttackFrame = -1;
     private int nextAttack;
     private bool isAttacking = false;
-    private AudioSource audioSource;
+
     private BlockComponent block;
+    private StaminaComponent stamina;
+
+    [SerializeField] private AudioClip attackSound;
+    private AudioSource audioSource;
+
     private Animator animator;
 
     public bool IsAttacking => isAttacking;
+    public float AttackAngle => attackAngle;
 
     private void Start()
     {
         stamina = GetComponent<StaminaComponent>();
-        audioSource = GetComponent<AudioSource>();
         block = GetComponent<BlockComponent>();
-        animator = GetComponent<Animator>();
-        if (stamina == null)
-            Debug.LogError("PlayerAttackComponent требует компонент StaminaComponent!");
 
-        if (attacks == null || attacks.Length == 0)
-            Debug.LogError("Не назначены атаки в PlayerAttackComponent!");
+        audioSource = GetComponent<AudioSource>();
+
+        animator = GetComponent<Animator>();
 
         nextAttack = Random.Range(0, attacks.Length);
     }
 
     private void Update()
     {
-        bool attackPressed = Input.GetKeyDown(attackKey) || Input.GetKeyDown(alternativeAttackKey);
+        if (block != null && block.IsBlocking) return;
+        var attackPressed = Input.GetKeyDown(attackKey) || Input.GetKeyDown(alternativeAttackKey);
 
         if (attackPressed && !isAttacking && Time.time >= lastAttackTime + cooldown)
         {
-            if (!stamina.TrySpendStamina(staminaCost))
-            {
-                Debug.Log("Недостаточно выносливости для атаки");
-                return;
-            }
+            if (Time.frameCount == lastAttackFrame) return;
+            lastAttackFrame = Time.frameCount;
+
+            if (!stamina.TrySpendStamina(staminaCost)) return;
 
             isAttacking = true;
             lastAttackTime = Time.time;
 
-            if (animator != null)
-                animator.SetTrigger("AttackTrigger");
+            if (animator != null) animator.SetTrigger("AttackTrigger");
 
             var attack = attacks[nextAttack];
-            GameObject target = FindTarget(attack.AttackDistance);
+            var target = FindTarget(attack.AttackDistance);
 
-            if (target != null)
-            {
-                attack.Perform(gameObject, target);
-                Debug.Log("Атака по врагу");
-            }
-            else
-            {
-                Debug.Log("Атака впустую (нет цели)");
-            }
+            if (target != null) attack.Perform(gameObject, target);
 
-            if (audioSource != null && attackSound != null)
-                audioSource.PlayOneShot(attackSound);
+            if (audioSource != null && attackSound != null) audioSource.PlayOneShot(attackSound);
 
             nextAttack = (nextAttack + 1) % attacks.Length;
             Invoke(nameof(ResetAttack), attackActiveDuration);
@@ -81,40 +70,57 @@ public class PlayerAttackComponent : MonoBehaviour
     private void ResetAttack()
     {
         isAttacking = false;
-        //Debug.Log("Атака завершена, управление разблокировано");
     }
 
-    private Vector2 GetForwardDirection()
+    public Vector2 GetForwardDirection()
     {
+        var right = transform.right;
         var sr = GetComponent<SpriteRenderer>();
-        return (sr != null && sr.flipX) ? Vector2.left : Vector2.right;
+        if (sr != null && sr.flipX) right = -right;
+        return right.normalized;
     }
 
     private GameObject FindTarget(float attackDistance)
     {
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, attackDistance);
-        float closestDistance = attackDistance + 1f;
+        var hitColliders = Physics2D.OverlapCircleAll(transform.position, attackDistance);
+        var closestDistance = attackDistance + 1f;
         GameObject closestTarget = null;
-        Vector2 forward = GetForwardDirection();
+        var forward = GetForwardDirection();
+        var halfAngle = attackAngle * 0.5f;
 
         foreach (var hit in hitColliders)
         {
             var health = hit.GetComponent<EnemyHealthComponent>();
             if (health == null) continue;
 
-            Vector2 dirToTarget = (hit.transform.position - transform.position).normalized;
-            float angle = Vector2.Angle(forward, dirToTarget);
+            var dirToTarget = (hit.transform.position - transform.position).normalized;
+            var angle = Vector2.Angle(forward, dirToTarget);
+            if (angle > halfAngle) continue;
 
-            if (angle <= attackAngle / 2f)
+            var distance = Vector2.Distance(transform.position, hit.transform.position);
+            if (distance < closestDistance)
             {
-                float dist = Vector2.Distance(transform.position, hit.transform.position);
-                if (dist < closestDistance)
-                {
-                    closestDistance = dist;
-                    closestTarget = hit.gameObject;
-                }
+                closestDistance = distance;
+                closestTarget = hit.gameObject;
             }
         }
         return closestTarget;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Vector2 origin = transform.position;
+        var forward = GetForwardDirection();
+        var halfAngle = attackAngle * 0.5f;
+        var radius = 1.5f;
+
+        var leftRot = Quaternion.Euler(0, 0, -halfAngle);
+        var rightRot = Quaternion.Euler(0, 0, halfAngle);
+        Vector2 leftDir = leftRot * forward;
+        Vector2 rightDir = rightRot * forward;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(origin, leftDir * radius);
+        Gizmos.DrawRay(origin, rightDir * radius);
     }
 }
