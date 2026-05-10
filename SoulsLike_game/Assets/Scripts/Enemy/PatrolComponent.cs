@@ -1,22 +1,27 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class PatrolComponent : MonoBehaviour
 {
     [SerializeField] private float speed = 5.0f;
     [SerializeField] private Transform[] points;
+    [SerializeField] private float minWaitTime = 1.5f;
+    [SerializeField] private float maxWaitTime = 5.5f;
 
+    private Rigidbody2D rb;
     private SpriteRenderer sprite;
     private Animator animator;
     private int nextPoint;
     private float waitTime;
+    private bool isWaiting;
 
     private void Awake()
     {
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         if (points == null || points.Length == 0)
@@ -28,25 +33,29 @@ public class PatrolComponent : MonoBehaviour
         nextPoint = Random.Range(0, points.Length);
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
+        if (isWaiting)
+        {
+            animator.SetBool("isMoving", false);
+            WaitOrPickNext();
+            return;
+        }
+
         MoveTowardsTarget();
         if (HasReachedTarget())
-            WaitOrPickNext();
+            isWaiting = true;
     }
 
     private void WaitOrPickNext()
     {
-        if (waitTime <= 0)
-        {
-            waitTime = 0.5f + 4 * Random.value;
-            nextPoint = Random.Range(0, points.Length);
-        }
+        if (waitTime > 0)
+            waitTime -= Time.fixedDeltaTime;
         else
         {
-            animator.SetBool("isMoving", false);
-            waitTime -= Time.deltaTime;
+            waitTime = minWaitTime + (maxWaitTime - minWaitTime) * Random.value;
+            nextPoint = Random.Range(0, points.Length);
+            isWaiting = false;
         }
     }
 
@@ -58,10 +67,11 @@ public class PatrolComponent : MonoBehaviour
         animator.SetBool("isMoving", true);
         var nextPos = transform.position;
         nextPos.x = points[nextPoint].position.x;
+        var newPos = Vector2.MoveTowards(transform.position, nextPos, speed * Time.fixedDeltaTime);
 
         if (nextPos.x - transform.position.x != 0)
             sprite.flipX = (nextPos.x - transform.position.x) > 0;
 
-        transform.position = Vector2.MoveTowards(transform.position, nextPos, speed * Time.deltaTime);
+        rb.MovePosition(newPos);
     }
 }

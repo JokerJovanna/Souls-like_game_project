@@ -9,7 +9,6 @@ public class MovementComponent : MonoBehaviour
     private float currentHorizontalSpeed;
 
     private DodgeComponent dodge;
-    private PlayerAttackComponent attack;
     private JumpComponent jump;
     private BlockComponent block;
 
@@ -26,7 +25,6 @@ public class MovementComponent : MonoBehaviour
 
     void Start()
     {
-        attack = GetComponent<PlayerAttackComponent>();
         dodge = GetComponent<DodgeComponent>();
         jump = GetComponent<JumpComponent>();
         block = GetComponent<BlockComponent>();
@@ -56,7 +54,7 @@ public class MovementComponent : MonoBehaviour
 
     private bool IsMovementLocked()
     {
-        return (dodge != null && dodge.IsDodging) || (attack != null && attack.IsAttacking) ||
+        return (dodge != null && dodge.IsDodging) ||
                (block != null && block.IsBlocking);
     }
 

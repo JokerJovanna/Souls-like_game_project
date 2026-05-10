@@ -9,7 +9,6 @@ public class PlayerHealthComponent : MonoBehaviour
     [SerializeField] private float blockDamageReduction = 0.7f;
     [SerializeField] private float blockAngle = 120f;
     [SerializeField] private float blockStaminaCost = 15f;
-    [SerializeField] private float perfectBlockDamageMultiplier = 0f;
     [SerializeField] private float greenEffectDuration = 0.2f;
 
     private float currentHealth;

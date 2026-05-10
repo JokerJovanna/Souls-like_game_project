@@ -50,6 +50,9 @@ TagManager:
   - name: Background
     uniqueID: 555874073
     locked: 0
+  - name: BackgroundObject
+    uniqueID: 1728591063
+    locked: 0
   - name: Ground
     uniqueID: 3593023609
     locked: 0
