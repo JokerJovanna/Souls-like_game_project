@@ -664,7 +664,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e26d757c0bdb7be4389160599d59fe90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDetectorComponent
-  TargetTag: Player
+  targetTag: Player
+  obstacle:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!114 &8992287926343859457
 MonoBehaviour:
   m_ObjectHideFlags: 0

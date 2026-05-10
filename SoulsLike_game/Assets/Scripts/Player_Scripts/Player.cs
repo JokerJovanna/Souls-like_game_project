@@ -18,10 +18,6 @@ public class Player : MonoBehaviour
     public bool IsDodging => dodge != null && dodge.IsDodging;
     public bool IsBlocking => block != null && block.IsBlocking;
 
-    public event System.Action<float, float> OnHealthChanged;
-    public event System.Action<float, float> OnStaminaChanged;
-    public event System.Action OnDie;
-
     void Awake()
     {
         movement = GetComponent<MovementComponent>();
@@ -32,20 +28,6 @@ public class Player : MonoBehaviour
         block = GetComponent<BlockComponent>();
 
         animator = GetComponent<Animator>();
-    }
-
-    void Start()
-    {
-        if (health != null)
-        {
-            health.OnHealthChanged += (cur, max) => OnHealthChanged?.Invoke(cur, max);
-            health.OnDie += () => OnDie?.Invoke();
-        }
-        if (stamina != null)
-        {
-            stamina.OnStaminaChanged += (cur, max) => OnStaminaChanged?.Invoke(cur, max);
-        }
-        if (jump != null) jump.OnJump += () => animator?.SetTrigger("JumpTrigger");
     }
 
     void Update()
