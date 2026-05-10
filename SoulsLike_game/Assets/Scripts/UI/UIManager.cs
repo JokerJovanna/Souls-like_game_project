@@ -143,6 +143,7 @@ namespace UI
                 onConfirm: OpenMainMenu,
                 onCancel: RestoreStateAfterConfirmation,
                 background: _mainMenuExitBackground);
+            _backgroundMusic.Stop();
         }
 
         private void RequestExitFromApp()
