@@ -1,19 +1,25 @@
-using UnityEngine;
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class Evil_Wizard_AttackComponent : MonoBehaviour
 {
-    [SerializeField] private float spawnAttackCooldown;
-    [SerializeField] private float meleeAttackCooldown;
+    [SerializeField] private float minMeleeCd = 0.5f;
+    [SerializeField] private float maxMeleeCd = 3f;
+    [SerializeField] private float spawnAttackCooldown = 20f;
 
-    private EnemyAttack attack_1;
-    private EnemyAttack attack_2;
-    private EnemyAttack attack_spawn;
+    private MeleeAttack_1 attack_1;
+    private MeleeAttack_2 attack_2;
+    private SpawnAttack attack_spawn;
     private PlayerChaserComponent chaser;
-    private float spawnAttackTimer;
-    private float meleeAttackTimer;
+    private float lastMeleeTime;
+    private float lastSpawnTime;
     private GameObject target;
     private SpriteRenderer sprite;
+    private EnemyAttack currentAttack;
+    private List<GameObject> activeMinions = new();
+    private float meleeAttackCooldown;
 
     private void Awake()
     {
@@ -24,40 +30,53 @@ public class Evil_Wizard_AttackComponent : MonoBehaviour
         sprite = GetComponent<SpriteRenderer>();
 
         target = GameObject.FindWithTag("Player");
-        spawnAttackTimer = spawnAttackCooldown;
+
+        meleeAttackCooldown = UnityEngine.Random.Range(minMeleeCd, 100 * maxMeleeCd) / 100f;
+        lastMeleeTime = -meleeAttackCooldown;
+        lastSpawnTime = -spawnAttackCooldown;
+
+        attack_spawn.OnSpawn += OnMinionSpawned;
     }
 
     private void Update()
     {
-        var nextAttack = GetNextAttack();
-        if (nextAttack == null) return;
         if (target == null) return;
+        if (currentAttack == null) GetNextAttack();
+        if (currentAttack == null) return;
 
-        var stopDistance = nextAttack.AttackDistance;
-        chaser.StopDistance = stopDistance;
+        chaser.StopDistance = currentAttack.AttackDistance;
 
-        sprite.flipX = target.transform.position.x - gameObject.transform.position.x < 0;
-        if (Math.Abs(gameObject.transform.position.x - target.transform.position.x) <= stopDistance)
-            nextAttack.Perform(gameObject, target);
+        sprite.flipX = target.transform.position.x - transform.position.x < 0;
+        if (Mathf.Abs(transform.position.x - target.transform.position.x) <= currentAttack.AttackDistance)
+        {
+            currentAttack.Perform(gameObject, target);
+            if (currentAttack is MeleeAttack_1 || currentAttack is MeleeAttack_2)
+            {
+                meleeAttackCooldown = UnityEngine.Random.Range(0, 301) / 100f;
+                lastMeleeTime = Time.time;
+            }
+            else lastSpawnTime = Time.time;
+                currentAttack = null;
+        }
     }
 
-    private EnemyAttack GetNextAttack()
+    private void GetNextAttack()
     {
-        meleeAttackTimer -= Time.deltaTime;
-        spawnAttackTimer -= Time.deltaTime;
+        if (activeMinions.Count == 0 && Time.time - lastSpawnTime >= spawnAttackCooldown)
+            currentAttack = attack_spawn;
 
-        if (spawnAttackTimer <= 0)
-        {
-            spawnAttackTimer = spawnAttackCooldown;
-            return attack_spawn;
-        }
 
-        if (meleeAttackTimer <= 0)
-        {
-            meleeAttackTimer = meleeAttackCooldown;
-            return (UnityEngine.Random.Range(1, 3) == 1) ? attack_1 : attack_2;
-        }
-            
-        return null;
-    }  
+        else if (Time.time - lastMeleeTime >= meleeAttackCooldown)
+            currentAttack = (UnityEngine.Random.Range(0, 2) == 0) ? attack_1 : attack_2;
+
+        else currentAttack = null;
+    }
+
+    private void OnMinionSpawned(GameObject minion)
+    {
+        activeMinions.Add(minion);
+        var hp = minion.GetComponent<EnemyHealthComponent>();
+        if (hp != null)
+            hp.OnDied += () => activeMinions.Remove(minion);
+    }
 }

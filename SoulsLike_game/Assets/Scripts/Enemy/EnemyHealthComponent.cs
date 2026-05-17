@@ -7,6 +7,8 @@ public class EnemyHealthComponent : MonoBehaviour
 {
     [SerializeField] private float maxHealth = 100f;
 
+    public System.Action OnDied;
+
     private Slider healthSlider;
     private SpriteRenderer sprite;
     private EnemySoundComponent sound;
@@ -50,6 +52,7 @@ public class EnemyHealthComponent : MonoBehaviour
     private void Die()
     {
         Debug.Log($"{name} умер.");
+        OnDied?.Invoke();
         Destroy(gameObject);
     }
 }

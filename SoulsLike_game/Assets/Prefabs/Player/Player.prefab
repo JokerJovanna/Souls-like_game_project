@@ -92,7 +92,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 411830135
-  m_SortingLayer: 4
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: -6203613636466217382, guid: 4e44e4db18b7a47448c4bf28022731ab, type: 3}
@@ -166,7 +166,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.042705536, y: -0.03717652}
+  m_Offset: {x: 0, y: -0.03}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.23, y: 0.5}
@@ -203,8 +203,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MovementComponent
   speed: 7
-  footstepSound: {fileID: 8300000, guid: 00bc03656fe5bb646891d5065afc735d, type: 3}
   footstepInterval: 0.4
+  footstepSound: {fileID: 8300000, guid: 00bc03656fe5bb646891d5065afc735d, type: 3}
 --- !u!114 &1951438491550283601
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217,17 +217,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2734bbe20b0dfa641a6a9a302ba03587, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JumpComponent
-  jumpForce: 15
+  isGrounded: 0
   maxJumps: 2
+  jumpForce: 15
   jumpCooldown: 0.2
   staminaCostJump: 20
+  groundCheckRadius: 0.2
+  jumpSound: {fileID: 8300000, guid: e831c67278501934f9f29ae75a70b174, type: 3}
   groundCheck: {fileID: 0}
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  groundCheckRadius: 0.2
-  jumpSound: {fileID: 8300000, guid: e831c67278501934f9f29ae75a70b174, type: 3}
-  isGrounded: 0
 --- !u!114 &3845020702367648898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,6 +259,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StaminaComponent
   maxStamina: 100
   staminaRegenRate: 20
+  staminaBar: {fileID: 0}
 --- !u!114 &2011420704506465818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,11 +277,11 @@ MonoBehaviour:
   blockDamageReduction: 0.7
   blockAngle: 120
   blockStaminaCost: 15
-  perfectBlockDamageMultiplier: 0
+  greenEffectDuration: 0.2
   hurtSound: {fileID: 8300000, guid: d20fb12385464c74ca52f36321198efb, type: 3}
   blockSound: {fileID: 8300000, guid: 56b151a77976b9241bfefa571058e48c, type: 3}
   dieSound: {fileID: 8300000, guid: 98244dcb07f3cae41bd8e795c9507e9d, type: 3}
-  greenEffectDuration: 0.2
+  healthBar: {fileID: 0}
 --- !u!114 &6908978657866876501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -296,8 +297,8 @@ MonoBehaviour:
   blockKey: 324
   alternativeBlockKey: 108
   perfectBlockWindow: 0.2
-  perfectBlockSound: {fileID: 8300000, guid: 20d1d6ebe81624443a4c6bca46341247, type: 3}
   resetVelocityOnBlockStart: 1
+  perfectBlockSound: {fileID: 8300000, guid: 20d1d6ebe81624443a4c6bca46341247, type: 3}
 --- !u!114 &3299796270910089476
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -455,6 +456,7 @@ MonoBehaviour:
   healAmount: 50
   useSound: {fileID: 8300000, guid: ec5f673bf4128ae4e8df01558406aeca, type: 3}
   noPotionSound: {fileID: 8300000, guid: 04760ec72a31dcd4c99b2cae57461050, type: 3}
+  potionCountText: {fileID: 0}
 --- !u!114 &9076158301905685712
 MonoBehaviour:
   m_ObjectHideFlags: 0
