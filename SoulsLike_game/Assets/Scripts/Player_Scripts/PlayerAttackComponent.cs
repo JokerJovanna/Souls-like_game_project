@@ -1,3 +1,6 @@
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 public class PlayerAttackComponent : MonoBehaviour
 {
@@ -56,9 +59,7 @@ public class PlayerAttackComponent : MonoBehaviour
             if (animator != null) animator.SetTrigger("AttackTrigger");
 
             var attack = attacks[nextAttack];
-            var target = FindTarget(attack.AttackDistance);
-
-            if (target != null) attack.Perform(gameObject, target);
+            attack.Perform(gameObject);
 
             if (audioSource != null && attackSound != null) audioSource.PlayOneShot(attackSound);
 
@@ -78,33 +79,6 @@ public class PlayerAttackComponent : MonoBehaviour
         var sr = GetComponent<SpriteRenderer>();
         if (sr != null && sr.flipX) right = -right;
         return right.normalized;
-    }
-
-    private GameObject FindTarget(float attackDistance)
-    {
-        var hitColliders = Physics2D.OverlapCircleAll(transform.position, attackDistance);
-        var closestDistance = attackDistance + 1f;
-        GameObject closestTarget = null;
-        var forward = GetForwardDirection();
-        var halfAngle = attackAngle * 0.5f;
-
-        foreach (var hit in hitColliders)
-        {
-            var health = hit.GetComponent<EnemyHealthComponent>();
-            if (health == null) continue;
-
-            var dirToTarget = (hit.transform.position - transform.position).normalized;
-            var angle = Vector2.Angle(forward, dirToTarget);
-            if (angle > halfAngle) continue;
-
-            var distance = Vector2.Distance(transform.position, hit.transform.position);
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestTarget = hit.gameObject;
-            }
-        }
-        return closestTarget;
     }
 
     private void OnDrawGizmosSelected()
