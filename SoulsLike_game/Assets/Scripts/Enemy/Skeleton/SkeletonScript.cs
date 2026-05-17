@@ -23,6 +23,7 @@ public class SkeletonScript : MonoBehaviour
     void Start()
     {
         InitializeComponents();
+        DisableCollisionWithPlayer();
     }
 
     public void OnPlayerDetected(GameObject player)
@@ -34,7 +35,7 @@ public class SkeletonScript : MonoBehaviour
 
     public void OnPlayerLost()
     {
-        patrol.enabled = true;
+        patrol.TryEnable();
         chaser.ClearTarget();
         attack.ClearTarget();
     }
@@ -57,5 +58,24 @@ public class SkeletonScript : MonoBehaviour
 
         detector.OnPlayerDetected += OnPlayerDetected;
         detector.OnPlayerLost += OnPlayerLost;
+    }
+
+    private void DisableCollisionWithPlayer()
+    {
+        var player = GameObject.FindWithTag("Player");
+        if (player == null) return;
+        var player_col = player.GetComponent<Collider2D>();
+        var myCollider = GetComponent<Collider2D>();
+        Physics2D.IgnoreCollision(player_col, myCollider);
+    }
+
+    public void ResizeTriggerCollider(float coef)
+    {
+        BoxCollider2D triggerCollider = null;
+        foreach (var col in GetComponents<BoxCollider2D>())
+            if (col.isTrigger) triggerCollider = col;
+        var size = triggerCollider.size;
+        var newSize = new Vector2(size.x * coef, size.y * coef);
+        triggerCollider.size = newSize;
     }
 }

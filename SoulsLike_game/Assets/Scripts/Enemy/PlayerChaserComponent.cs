@@ -4,6 +4,7 @@ using UnityEngine;
 public class PlayerChaserComponent : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
+    [SerializeField] private bool spriteFacesLeft = true;
     public float StopDistance = 1.5f;
 
     private Rigidbody2D rb;
@@ -20,6 +21,7 @@ public class PlayerChaserComponent : MonoBehaviour
     public void ClearTarget()
     {
         target = null;
+        animator.SetBool("isMoving", false);
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
 
@@ -34,7 +36,7 @@ public class PlayerChaserComponent : MonoBehaviour
     {
         if (target == null) return;
 
-        if (Vector2.Distance(target.position, transform.position) > StopDistance)
+        if (Math.Abs(target.position.x - transform.position.x) > StopDistance)
         {
             animator.SetBool("isMoving", true);
 
@@ -42,12 +44,12 @@ public class PlayerChaserComponent : MonoBehaviour
             rb.linearVelocity = new Vector2(direction * speed, rb.linearVelocity.y);
 
             if (direction != 0)
-                sprite.flipX = direction > 0;
+                sprite.flipX = !(direction > 0 ^ spriteFacesLeft);
         }
         else
         {
             animator.SetBool("isMoving", false);
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
-        } 
+        }
     }
 }

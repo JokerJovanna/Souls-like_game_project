@@ -15,6 +15,7 @@ public class PatrolComponent : MonoBehaviour
     private int nextPoint;
     private float waitTime;
     private bool isWaiting;
+    private bool isEnabledAtStart = true;
 
     private void Awake()
     {
@@ -28,6 +29,7 @@ public class PatrolComponent : MonoBehaviour
         if (points == null || points.Length == 0)
         {
             enabled = false;
+            isEnabledAtStart = false;
             Debug.LogWarning($"{name}: Patrol has no waypoints, disabling.");
             return;
         }
@@ -74,5 +76,10 @@ public class PatrolComponent : MonoBehaviour
             sprite.flipX = (nextPos.x - transform.position.x) > 0;
 
         rb.linearVelocity = new Vector2(direction * speed, rb.linearVelocity.y);
+    }
+
+    public void TryEnable()
+    {
+        if (isEnabledAtStart) enabled = true;
     }
 }

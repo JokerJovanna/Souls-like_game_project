@@ -1,15 +1,13 @@
+using System;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
-public class SingleMeleeAttack : EnemyAttack
+public class MeleeAttack_1 : EnemyAttack
 {
-    [SerializeField] private float damage = 10f;
+    [SerializeField] private float damage = 30f;
+    [SerializeField] private float attackRange = 3.5f;
+    [SerializeField] private float attackDistance = 2f;
     [SerializeField] private bool canBeBlocked = true;
-    [SerializeField] private float attackDistance = 1.5f;
-    [SerializeField] private float attackRange = 2f;
-
-    public override float AttackDistance => attackDistance;
-    public override float AttackRange => attackRange;
-    public override bool IsPerforming => isPerforming;
 
     private Animator animator;
     private PlayerChaserComponent chaser;
@@ -17,6 +15,10 @@ public class SingleMeleeAttack : EnemyAttack
     private GameObject currentTarget;
     private GameObject currentAttacker;
     private bool isPerforming;
+
+    public override float AttackDistance => attackDistance;
+    public override float AttackRange => attackRange;
+    public override bool IsPerforming => isPerforming;
 
     private void Awake()
     {
@@ -28,25 +30,25 @@ public class SingleMeleeAttack : EnemyAttack
     public override void Perform(GameObject attacker, GameObject target)
     {
         if (target == null) return;
-        if (Vector2.Distance(target.transform.position, attacker.transform.position) > attackRange) return;
-        animator.SetTrigger("isAttacking");
         currentAttacker = attacker;
         currentTarget = target;
+        if (Vector2.Distance(currentTarget.transform.position, attacker.transform.position) > attackRange) return;
+        animator.SetTrigger("isAttacking_1");
     }
 
-    private void OnAttackEnd()
+    private void OnAttack_1End()
     {
         chaser.SetTarget(currentTarget);
         isPerforming = false;
     }
 
-    private void OnAttackStart()
+    private void OnAttack_1Start()
     {
         chaser.ClearTarget();
         isPerforming = true;
     }
 
-    private void OnHit()
+    private void OnAttack_1Hit()
     {
         if (currentTarget == null) return;
         if (!IsTargetInFront()) return;
@@ -59,11 +61,11 @@ public class SingleMeleeAttack : EnemyAttack
     {
         var attcakerPos = currentAttacker.transform.position;
         var targetPos = currentTarget.transform.position;
-        if (Vector2.Distance(targetPos, attcakerPos) > attackDistance) return false;
+        if (Vector2.Distance(targetPos, attcakerPos) > attackRange) return false;
 
         var dir = targetPos.x - attcakerPos.x;
-        if (dir >= 0 && sprite.flipX == true) return true;
-        if (dir <= 0 && sprite.flipX == false) return true;
+        if (dir >= 0 && sprite.flipX == false) return true;
+        if (dir <= 0 && sprite.flipX == true) return true;
 
         return false;
     }

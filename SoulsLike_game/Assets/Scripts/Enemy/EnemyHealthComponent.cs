@@ -24,9 +24,15 @@ public class EnemyHealthComponent : MonoBehaviour
     {
         if (currentHealth <= 0) return;
         currentHealth -= attack.Damage;
-        sound.PlayHurt();
+
+        if (sound != null)
+            sound.PlayHurt();
+
         StartCoroutine(FlashRed());
-        healthSlider.value = currentHealth / maxHealth;
+
+        if (healthSlider != null)
+            healthSlider.value = currentHealth / maxHealth;
+
         Debug.Log($"{name} получил {attack.Damage} урона. Осталось {currentHealth} HP.");
         if (currentHealth <= 0)
             Die();
