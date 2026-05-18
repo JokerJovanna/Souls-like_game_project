@@ -34,7 +34,7 @@ public class WolfScript : MonoBehaviour
 
     public void OnPlayerLost()
     {
-        patrol.TryEnable();
+        patrol.enabled = true;
         chaser.ClearTarget();
         attack.ClearTarget();
     }

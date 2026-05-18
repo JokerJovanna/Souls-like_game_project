@@ -35,7 +35,7 @@ public class SkeletonScript : MonoBehaviour
 
     public void OnPlayerLost()
     {
-        patrol.TryEnable();
+        patrol.enabled = true;
         chaser.ClearTarget();
         attack.ClearTarget();
     }
