@@ -11,6 +11,7 @@ public class PlayerHealthComponent : MonoBehaviour
     [SerializeField] private float blockStaminaCost = 15f;
     [SerializeField] private float perfectBlockDamageMultiplier = 0f;
     [SerializeField] private float greenEffectDuration = 0.2f;
+    [SerializeField] private float perfectBlockStaminaRestore = 20f;
 
     private float currentHealth;
     private bool isInvincible = false;
@@ -29,7 +30,7 @@ public class PlayerHealthComponent : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
-    [SerializeField] private Slider healthBar; 
+    [SerializeField] private Slider healthBar;
 
     public event Action<float, float> OnHealthChanged;
     public event Action OnDie;
@@ -123,6 +124,8 @@ public class PlayerHealthComponent : MonoBehaviour
         {
             perfect = true;
             finalDamage = 0f;
+            if (stamina != null)
+                stamina.AddStamina(perfectBlockStaminaRestore);
             return;
         }
 
