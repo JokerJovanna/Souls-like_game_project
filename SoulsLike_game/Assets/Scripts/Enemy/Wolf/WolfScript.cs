@@ -15,7 +15,7 @@ public class WolfScript : MonoBehaviour
         attack = GetComponent<AttackComponent>();
         patrol = GetComponent<PatrolComponent>();
         chaser = GetComponent<PlayerChaserComponent>();
-        detector = GetComponent<PlayerDetectorComponent>();
+        detector = GetComponentInChildren<PlayerDetectorComponent>();
         health = GetComponent<EnemyHealthComponent>();
         sound = GetComponent<EnemySoundComponent>();
     }
@@ -23,7 +23,6 @@ public class WolfScript : MonoBehaviour
     void Start()
     {
         InitializeComponents();
-        DisableCollisionWithPlayer();
     }
 
     public void OnPlayerDetected(GameObject player)
@@ -73,19 +72,10 @@ public class WolfScript : MonoBehaviour
         sound.enabled = false;
     }
 
-    private void DisableCollisionWithPlayer()
-    {
-        var player = GameObject.FindWithTag("Player");
-        if (player == null) return;
-        var player_col = player.GetComponent<Collider2D>();
-        var myCollider = GetComponent<Collider2D>();
-        Physics2D.IgnoreCollision(player_col, myCollider);
-    }
-
     public void ResizeTriggerCollider(float coef)
     {
         BoxCollider2D triggerCollider = null;
-        foreach (var col in GetComponents<BoxCollider2D>())
+        foreach (var col in GetComponentsInChildren<BoxCollider2D>())
             if (col.isTrigger) triggerCollider = col;
         var size = triggerCollider.size;
         var newSize = new Vector2(size.x * coef, size.y * coef);

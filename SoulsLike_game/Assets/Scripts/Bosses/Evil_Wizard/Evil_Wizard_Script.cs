@@ -40,7 +40,7 @@ public class Evil_Wizard_Script : MonoBehaviour
         chaser.enabled = true;
 
         health.OnDied += DisableComponents;
-        health.OnDied += portal.Activate;
+        if (portal != null) health.OnDied += portal.Activate;
     }
 
     private void DisableComponents()
