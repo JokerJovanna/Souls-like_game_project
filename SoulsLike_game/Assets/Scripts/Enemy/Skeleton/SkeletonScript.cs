@@ -47,6 +47,7 @@ public class SkeletonScript : MonoBehaviour
             detector.OnPlayerDetected -= OnPlayerDetected;
             detector.OnPlayerLost -= OnPlayerLost;
         }
+        health.OnDied -= DisableAllComponents;
     }
 
     private void InitializeComponents()
@@ -71,6 +72,8 @@ public class SkeletonScript : MonoBehaviour
         chaser.enabled = false;
         detector.enabled = false;
         sound.enabled = false;
+        foreach (var col in GetComponents<BoxCollider2D>())
+            if (col.isTrigger) col.enabled = false;
     }
 
     private void DisableCollisionWithPlayer()

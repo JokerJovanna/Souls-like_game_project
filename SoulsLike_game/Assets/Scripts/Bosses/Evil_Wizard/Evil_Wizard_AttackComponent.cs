@@ -52,7 +52,7 @@ public class Evil_Wizard_AttackComponent : MonoBehaviour
             currentAttack.Perform(gameObject, target);
             if (currentAttack is MeleeAttack_1 || currentAttack is MeleeAttack_2)
             {
-                meleeAttackCooldown = UnityEngine.Random.Range(0, 301) / 100f;
+                meleeAttackCooldown = UnityEngine.Random.Range(minMeleeCd, 100 * maxMeleeCd) / 100f;
                 lastMeleeTime = Time.time;
             }
             else lastSpawnTime = Time.time;

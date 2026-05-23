@@ -13,6 +13,7 @@ public class EnemyHealthComponent : MonoBehaviour
     private Slider healthSlider;
     private SpriteRenderer sprite;
     private EnemySoundComponent sound;
+    private Rigidbody2D rb;
     private float currentHealth;
 
     private void Awake()
@@ -22,6 +23,7 @@ public class EnemyHealthComponent : MonoBehaviour
         sprite = GetComponent<SpriteRenderer>();
         sound = GetComponent<EnemySoundComponent>();
         animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     public void TakeDamage(AttackData attack)
@@ -56,6 +58,7 @@ public class EnemyHealthComponent : MonoBehaviour
         Debug.Log($"{name} умер.");
         healthSlider.gameObject.SetActive(false);
         OnDied?.Invoke();
+        rb.linearVelocity = new Vector2(0, 0);
         animator.SetTrigger("Die");
         Destroy(gameObject, 20);
     }

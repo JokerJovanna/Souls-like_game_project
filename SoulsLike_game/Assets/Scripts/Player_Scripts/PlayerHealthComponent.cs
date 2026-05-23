@@ -219,9 +219,6 @@ public class PlayerHealthComponent : MonoBehaviour
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
         if (sr != null) sr.enabled = false;
 
-        Collider2D col = GetComponent<Collider2D>();
-        if (col != null) col.enabled = false;
-
         MovementComponent movement = GetComponent<MovementComponent>();
         if (movement != null) movement.enabled = false;
 

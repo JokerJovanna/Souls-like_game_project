@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Evil_Wizard_Script : MonoBehaviour
 {
+    [SerializeField] private PortalScript portal;
     private EnemyHealthComponent health;
     private PlayerChaserComponent chaser;
     private Evil_Wizard_AttackComponent attack;
@@ -39,6 +40,7 @@ public class Evil_Wizard_Script : MonoBehaviour
         chaser.enabled = true;
 
         health.OnDied += DisableComponents;
+        health.OnDied += portal.Activate;
     }
 
     private void DisableComponents()

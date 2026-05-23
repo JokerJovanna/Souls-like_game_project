@@ -15,7 +15,7 @@ public class PlayerDetectorComponent : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag(targetTag) && target == null)
+        if (other.CompareTag(targetTag) && target == null && isActiveAndEnabled)
         {
             target = other.gameObject;
             if (IsVisible())
@@ -28,7 +28,7 @@ public class PlayerDetectorComponent : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        if (other.CompareTag(targetTag) && other.gameObject == target)
+        if (other.CompareTag(targetTag) && other.gameObject == target && isActiveAndEnabled)
         {
             var nowVisible = IsVisible();
             if (nowVisible && !wasVisible)
@@ -46,7 +46,7 @@ public class PlayerDetectorComponent : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag(targetTag) && other.gameObject == target)
+        if (other.CompareTag(targetTag) && other.gameObject == target && isActiveAndEnabled)
         {
             target = null;
             wasVisible = false;
