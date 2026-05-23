@@ -698,7 +698,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 451fe46d6329dab4b9f1084c925e82b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySoundComponent
-  hit: {fileID: 8300000, guid: 8be0bc2d27986d9478d88a3828291574, type: 3}
+  attack_1: {fileID: 8300000, guid: 8be0bc2d27986d9478d88a3828291574, type: 3}
+  attack_2: {fileID: 0}
+  attack_3: {fileID: 0}
   takeDamage: {fileID: 8300000, guid: e01e8bf7ced0aa44f9283fde43f32859, type: 3}
   die: {fileID: 0}
 --- !u!82 &6679916941316297203
