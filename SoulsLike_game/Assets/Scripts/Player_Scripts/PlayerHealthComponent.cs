@@ -21,6 +21,7 @@ public class PlayerHealthComponent : MonoBehaviour
     private DodgeComponent dodgeComponent;
     private BlockComponent blockComponent;
     private StaminaComponent stamina;
+    private Animator animator;
 
     private AudioSource audioSource;
     [SerializeField] private AudioClip hurtSound;
@@ -47,6 +48,7 @@ public class PlayerHealthComponent : MonoBehaviour
         blockComponent = GetComponent<BlockComponent>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         stamina = GetComponent<StaminaComponent>();
+        animator = GetComponent<Animator>();
 
         audioSource = GetComponent<AudioSource>();
 
@@ -237,6 +239,7 @@ public class PlayerHealthComponent : MonoBehaviour
 
         PotionComponent potion = GetComponent<PotionComponent>();
         if (potion != null) potion.enabled = false;
-        gameObject.SetActive(false);
+
+        animator.SetTrigger("Die");
     }
 }

@@ -9,6 +9,7 @@ public class EnemyHealthComponent : MonoBehaviour
 
     public System.Action OnDied;
 
+    private Animator animator;
     private Slider healthSlider;
     private SpriteRenderer sprite;
     private EnemySoundComponent sound;
@@ -20,6 +21,7 @@ public class EnemyHealthComponent : MonoBehaviour
         healthSlider = GetComponentInChildren<Slider>();
         sprite = GetComponent<SpriteRenderer>();
         sound = GetComponent<EnemySoundComponent>();
+        animator = GetComponent<Animator>();
     }
 
     public void TakeDamage(AttackData attack)
@@ -52,7 +54,9 @@ public class EnemyHealthComponent : MonoBehaviour
     private void Die()
     {
         Debug.Log($"{name} умер.");
+        healthSlider.gameObject.SetActive(false);
         OnDied?.Invoke();
-        Destroy(gameObject);
+        animator.SetTrigger("Die");
+        Destroy(gameObject, 20);
     }
 }
