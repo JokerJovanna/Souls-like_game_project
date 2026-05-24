@@ -75,6 +75,9 @@ public class BlockComponent : MonoBehaviour
             justBlockedPerfect = true;
             if (audioSource != null && perfectBlockSound != null)
                 audioSource.PlayOneShot(perfectBlockSound);
+
+            if (animator != null)
+                animator.SetTrigger("PerfectBlock");
         }
         return perfect;
     }

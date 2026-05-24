@@ -3,7 +3,9 @@ using UnityEngine.Audio;
 
 public class EnemySoundComponent : MonoBehaviour
 {
-    [SerializeField] AudioClip hit;
+    [SerializeField] AudioClip attack_1;
+    [SerializeField] AudioClip attack_2;
+    [SerializeField] AudioClip attack_3;
     [SerializeField] AudioClip takeDamage;
     [SerializeField] AudioClip die;
 
@@ -16,7 +18,9 @@ public class EnemySoundComponent : MonoBehaviour
         source.loop = false;
     }
 
-    public void PlayHit() => PlaySound(hit);
+    public void PlayAttack_1() => PlaySound(attack_1);
+    public void PlayAttack_2() => PlaySound(attack_2);
+    public void PlayAttack_3() => PlaySound(attack_3);
     public void PlayHurt() => PlaySound(takeDamage);
     public void PlayDeath() => PlaySound(die);
 

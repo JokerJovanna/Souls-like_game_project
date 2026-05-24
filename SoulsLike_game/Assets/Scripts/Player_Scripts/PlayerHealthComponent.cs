@@ -10,6 +10,7 @@ public class PlayerHealthComponent : MonoBehaviour
     [SerializeField] private float blockAngle = 120f;
     [SerializeField] private float blockStaminaCost = 15f;
     [SerializeField] private float greenEffectDuration = 0.2f;
+    [SerializeField] private float perfectBlockStaminaRestore = 20f;
 
     private float currentHealth;
     private bool isInvincible = false;
@@ -20,6 +21,7 @@ public class PlayerHealthComponent : MonoBehaviour
     private DodgeComponent dodgeComponent;
     private BlockComponent blockComponent;
     private StaminaComponent stamina;
+    private Animator animator;
 
     private AudioSource audioSource;
     [SerializeField] private AudioClip hurtSound;
@@ -28,7 +30,7 @@ public class PlayerHealthComponent : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
-    [SerializeField] private Slider healthBar; 
+    [SerializeField] private Slider healthBar;
 
     public event Action<float, float> OnHealthChanged;
     public event Action OnDie;
@@ -46,6 +48,7 @@ public class PlayerHealthComponent : MonoBehaviour
         blockComponent = GetComponent<BlockComponent>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         stamina = GetComponent<StaminaComponent>();
+        animator = GetComponent<Animator>();
 
         audioSource = GetComponent<AudioSource>();
 
@@ -122,6 +125,8 @@ public class PlayerHealthComponent : MonoBehaviour
         {
             perfect = true;
             finalDamage = 0f;
+            if (stamina != null)
+                stamina.AddStamina(perfectBlockStaminaRestore);
             return;
         }
 
@@ -214,9 +219,6 @@ public class PlayerHealthComponent : MonoBehaviour
         SpriteRenderer sr = GetComponent<SpriteRenderer>();
         if (sr != null) sr.enabled = false;
 
-        Collider2D col = GetComponent<Collider2D>();
-        if (col != null) col.enabled = false;
-
         MovementComponent movement = GetComponent<MovementComponent>();
         if (movement != null) movement.enabled = false;
 
@@ -234,6 +236,7 @@ public class PlayerHealthComponent : MonoBehaviour
 
         PotionComponent potion = GetComponent<PotionComponent>();
         if (potion != null) potion.enabled = false;
-        gameObject.SetActive(false);
+
+        animator.SetTrigger("Die");
     }
 }

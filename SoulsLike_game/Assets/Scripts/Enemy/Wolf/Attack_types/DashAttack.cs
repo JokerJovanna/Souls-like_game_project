@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class DashAttack : Attack
+public class DashAttack : EnemyAttack
 {
     [SerializeField] private float dashStartDistance = 4f;
     [SerializeField] private float dashDistance = 8f;
@@ -17,6 +17,7 @@ public class DashAttack : Attack
     private bool isPerforming;
     private Animator animator;
     private PlayerChaserComponent chaser;
+    private GameObject target;
 
     private void Awake()
     {
@@ -27,6 +28,7 @@ public class DashAttack : Attack
     public override void Perform(GameObject attacker, GameObject target)
     {
         if (target == null) return;
+        this.target = target;
         animator.SetTrigger("isAttacking");
         StartCoroutine(DashRoutine(attacker, target));
     }
@@ -87,12 +89,12 @@ public class DashAttack : Attack
     public void OnAttackStart()
     {
         isPerforming = true;
-        chaser.enabled = false;
+        chaser.ClearTarget();
     }
 
     public void OnAttackEnd()
     {
         isPerforming = false;
-        chaser.enabled = true;
+        chaser.SetTarget(target);
     }
 }
