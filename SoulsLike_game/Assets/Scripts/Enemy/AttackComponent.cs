@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class AttackComponent : MonoBehaviour
 {
-    [SerializeField] private Attack[] attacks;
+    [SerializeField] private EnemyAttack[] attacks;
     [SerializeField] private float cooldown = 2f;
 
     private PlayerChaserComponent chaser;
@@ -10,7 +10,7 @@ public class AttackComponent : MonoBehaviour
     private float cooldownTimer = 0f;
     private GameObject target;
     private int nextAttack;
-    private Attack currentAttack;
+    private EnemyAttack currentAttack;
 
     public void SetTarget(GameObject target)
     {
@@ -35,7 +35,6 @@ public class AttackComponent : MonoBehaviour
         chaser.StopDistance = attacks[nextAttack].AttackDistance;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (target == null) return;
@@ -54,7 +53,7 @@ public class AttackComponent : MonoBehaviour
             PerformAttack(currentAttack);
     }
 
-    private void PerformAttack(Attack attack)
+    private void PerformAttack(EnemyAttack attack)
     {
         attack.Perform(gameObject, target);
         cooldownTimer = cooldown;

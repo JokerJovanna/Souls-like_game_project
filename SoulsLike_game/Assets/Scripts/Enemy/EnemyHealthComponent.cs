@@ -7,9 +7,13 @@ public class EnemyHealthComponent : MonoBehaviour
 {
     [SerializeField] private float maxHealth = 100f;
 
+    public System.Action OnDied;
+
+    private Animator animator;
     private Slider healthSlider;
     private SpriteRenderer sprite;
     private EnemySoundComponent sound;
+    private Rigidbody2D rb;
     private float currentHealth;
 
     private void Awake()
@@ -18,15 +22,23 @@ public class EnemyHealthComponent : MonoBehaviour
         healthSlider = GetComponentInChildren<Slider>();
         sprite = GetComponent<SpriteRenderer>();
         sound = GetComponent<EnemySoundComponent>();
+        animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     public void TakeDamage(AttackData attack)
     {
         if (currentHealth <= 0) return;
         currentHealth -= attack.Damage;
-        sound.PlayHurt();
+
+        if (sound != null)
+            sound.PlayHurt();
+
         StartCoroutine(FlashRed());
-        healthSlider.value = currentHealth / maxHealth;
+
+        if (healthSlider != null)
+            healthSlider.value = currentHealth / maxHealth;
+
         Debug.Log($"{name} получил {attack.Damage} урона. Осталось {currentHealth} HP.");
         if (currentHealth <= 0)
             Die();
@@ -44,6 +56,10 @@ public class EnemyHealthComponent : MonoBehaviour
     private void Die()
     {
         Debug.Log($"{name} умер.");
-        Destroy(gameObject);
+        healthSlider.gameObject.SetActive(false);
+        OnDied?.Invoke();
+        rb.linearVelocity = new Vector2(0, 0);
+        animator.SetTrigger("Die");
+        Destroy(gameObject, 20);
     }
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SingleMeleeAttack : Attack
+public class SingleMeleeAttack : EnemyAttack
 {
     [SerializeField] private float damage = 10f;
     [SerializeField] private bool canBeBlocked = true;
@@ -36,13 +36,13 @@ public class SingleMeleeAttack : Attack
 
     private void OnAttackEnd()
     {
-        chaser.enabled = true;
+        chaser.SetTarget(currentTarget);
         isPerforming = false;
     }
 
     private void OnAttackStart()
     {
-        chaser.enabled = false;
+        chaser.ClearTarget();
         isPerforming = true;
     }
 

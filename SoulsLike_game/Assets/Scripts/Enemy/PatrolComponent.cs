@@ -27,8 +27,7 @@ public class PatrolComponent : MonoBehaviour
     {
         if (points == null || points.Length == 0)
         {
-            enabled = false;
-            Debug.LogWarning($"{name}: Patrol has no waypoints, disabling.");
+            Debug.LogWarning($"{name}: Patrol has no waypoints");
             return;
         }
         nextPoint = Random.Range(0, points.Length);
@@ -36,6 +35,8 @@ public class PatrolComponent : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (points.Length == 0) return;
+
         if (isWaiting)
         {
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
@@ -74,5 +75,11 @@ public class PatrolComponent : MonoBehaviour
             sprite.flipX = (nextPos.x - transform.position.x) > 0;
 
         rb.linearVelocity = new Vector2(direction * speed, rb.linearVelocity.y);
+    }
+
+    public void SetPatrolPoints(GameObject pointsParent)
+    {
+        var points = pointsParent.GetComponentsInChildren<Transform>();
+        this.points = points;
     }
 }

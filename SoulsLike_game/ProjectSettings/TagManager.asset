@@ -68,5 +68,8 @@ TagManager:
   - name: StatusBarCover
     uniqueID: 512250411
     locked: 0
+  - name: Shade
+    uniqueID: 3271919463
+    locked: 0
   m_RenderingLayers:
   - Default

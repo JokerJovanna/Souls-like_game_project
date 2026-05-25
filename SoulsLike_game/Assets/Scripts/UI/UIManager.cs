@@ -173,7 +173,6 @@ namespace UI
         private void EnablePlayer()
         {
             _Player.gameObject.SetActive(true);
-            _Player.DisableCollisionWithEnemies();
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class WolfScript : MonoBehaviour
@@ -6,17 +7,17 @@ public class WolfScript : MonoBehaviour
     private PatrolComponent patrol;
     private PlayerChaserComponent chaser;
     private PlayerDetectorComponent detector;
+    private EnemyHealthComponent health;
+    private EnemySoundComponent sound;
 
     void Awake()
-    { 
+    {
         attack = GetComponent<AttackComponent>();
         patrol = GetComponent<PatrolComponent>();
         chaser = GetComponent<PlayerChaserComponent>();
-        detector = GetComponent<PlayerDetectorComponent>();
-        if (attack == null) Debug.LogError("AttackComponent missing");
-        if (patrol == null) Debug.LogError("PatrolComponent missing");
-        if (chaser == null) Debug.LogError("PlayerChaserComponent missing");
-        if (detector == null) Debug.LogError("PlayerDetectorComponent missing");
+        detector = GetComponentInChildren<PlayerDetectorComponent>();
+        health = GetComponent<EnemyHealthComponent>();
+        sound = GetComponent<EnemySoundComponent>();
     }
 
     void Start()
@@ -49,12 +50,35 @@ public class WolfScript : MonoBehaviour
 
     private void InitializeComponents()
     {
+        health.enabled = true;
         attack.enabled = true;
         patrol.enabled = true;
         chaser.enabled = true;
         detector.enabled = true;
+        sound.enabled = true;
 
         detector.OnPlayerDetected += OnPlayerDetected;
         detector.OnPlayerLost += OnPlayerLost;
+        health.OnDied += DisableAllComponents;
+    }
+
+    private void DisableAllComponents()
+    {
+        health.enabled = false;
+        attack.enabled = false;
+        patrol.enabled = false;
+        chaser.enabled = false;
+        detector.enabled = false;
+        sound.enabled = false;
+    }
+
+    public void ResizeTriggerCollider(float coef)
+    {
+        BoxCollider2D triggerCollider = null;
+        foreach (var col in GetComponentsInChildren<BoxCollider2D>())
+            if (col.isTrigger) triggerCollider = col;
+        var size = triggerCollider.size;
+        var newSize = new Vector2(size.x * coef, size.y * coef);
+        triggerCollider.size = newSize;
     }
 }
