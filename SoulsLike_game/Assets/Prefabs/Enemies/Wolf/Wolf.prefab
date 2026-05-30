@@ -716,7 +716,7 @@ MonoBehaviour:
   dashDistance: 8
   attackDistance: 0.7
   dashSpeed: 20
-  damage: 20
+  damage: 15
   canBeBlocked: 0
 --- !u!114 &8808505634341121787
 MonoBehaviour:

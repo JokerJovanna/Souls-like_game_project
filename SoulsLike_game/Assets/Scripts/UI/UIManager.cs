@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 namespace UI
 {
@@ -10,16 +11,24 @@ namespace UI
         [SerializeField] private GameplayWindow _gameplayUI;
         [SerializeField] private PauseMenuWindow _pauseMenu;
         [SerializeField] private ConfirmationWindow _confirmationMenu;
+        [SerializeField] private LoreWindow _loreWindow;
+        [SerializeField] private DeathWindow _deathWindow;
         [SerializeField] private Sprite _mainMenuExitBackground;
         [SerializeField] private Player _Player;
         [SerializeField] private MusicManager _backgroundMusic;
+
+        private PlayerHealthComponent _playerHealth;
+        private static bool _loreShownThisSession = false;
+        private static bool _shouldAutoStartGame = false;
 
         private enum UIState
         {
             MainMenu,
             Gameplay,
             Paused,
-            Confirmation
+            Confirmation,
+            Lore,
+            Death
         }
 
         private UIState _currentState;
@@ -27,14 +36,27 @@ namespace UI
         private GameObject _lastSelectedGameObject;
 
         private void Awake()
-            => SubscribeToEvents();
+        {
+            if (_Player != null)
+                _playerHealth = _Player.GetComponent<PlayerHealthComponent>();
+            SubscribeToEvents();
+        }
 
         private void Start()
         {
-            if (_Player)
-                _Player.gameObject.SetActive(false);
+            if (_shouldAutoStartGame)
+            {
+                _shouldAutoStartGame = false;
+                _loreShownThisSession = true;
+                StartGame();
+            }
+            else
+            {
+                if (_Player)
+                    _Player.gameObject.SetActive(false);
 
-            OpenMainMenu();
+                OpenMainMenu();
+            }
         }
 
         private void Update()
@@ -68,20 +90,44 @@ namespace UI
 
         private void SubscribeToEvents()
         {
-            _mainMenu.OnPlayClicked += StartGame;
+            _mainMenu.OnPlayClicked += HandlePlayClicked;
             _mainMenu.OnExitClicked += RequestExitFromApp;
 
             _pauseMenu.OnContinueClicked += ResumeGame;
             _pauseMenu.OnMainMenuClicked += RequestExitToMainMenu;
+
+            if (_loreWindow != null)
+                _loreWindow.OnContinueClicked += CloseLoreAndStartGame;
+
+            if (_deathWindow != null)
+            {
+                _deathWindow.OnMainMenuClicked += ReloadSceneToMainMenu;
+                _deathWindow.OnRespawnClicked += ReloadSceneAndStartGame;
+            }
+
+            if (_playerHealth != null)
+                _playerHealth.OnDie += ShowDeathScreen;
         }
 
         private void UnsubscribeFromEvents()
         {
-            _mainMenu.OnPlayClicked -= StartGame;
+            _mainMenu.OnPlayClicked -= HandlePlayClicked;
             _mainMenu.OnExitClicked -= RequestExitFromApp;
 
             _pauseMenu.OnContinueClicked -= ResumeGame;
             _pauseMenu.OnMainMenuClicked -= RequestExitToMainMenu;
+
+            if (_loreWindow != null)
+                _loreWindow.OnContinueClicked -= CloseLoreAndStartGame;
+
+            if (_deathWindow != null)
+            {
+                _deathWindow.OnMainMenuClicked -= ReloadSceneToMainMenu;
+                _deathWindow.OnRespawnClicked -= ReloadSceneAndStartGame;
+            }
+
+            if (_playerHealth != null)
+                _playerHealth.OnDie -= ShowDeathScreen;
         }
 
         private void CloseAllWindows()
@@ -90,6 +136,8 @@ namespace UI
             _gameplayUI.Hide();
             _pauseMenu.Hide();
             _confirmationMenu.Hide();
+            if (_loreWindow != null) _loreWindow.Hide();
+            if (_deathWindow != null) _deathWindow.Hide();
         }
 
         private void OpenMainMenu()
@@ -99,6 +147,32 @@ namespace UI
             CloseAllWindows();
             Time.timeScale = 1f;
             _mainMenu.Show();
+        }
+
+        private void HandlePlayClicked()
+        {
+            if (!_loreShownThisSession)
+            {
+                OpenLoreScreen();
+            }
+            else
+            {
+                StartGame();
+            }
+        }
+
+        private void OpenLoreScreen()
+        {
+            _previousState = _currentState;
+            _currentState = UIState.Lore;
+            CloseAllWindows();
+            if (_loreWindow != null) _loreWindow.Show();
+        }
+
+        private void CloseLoreAndStartGame()
+        {
+            _loreShownThisSession = true;
+            StartGame();
         }
 
         private void StartGame()
@@ -140,7 +214,7 @@ namespace UI
             _previousState = _currentState;
             _currentState = UIState.Confirmation;
             _confirmationMenu.Show(
-                onConfirm: OpenMainMenu,
+                onConfirm: ReloadSceneToMainMenu,
                 onCancel: RestoreStateAfterConfirmation,
                 background: _mainMenuExitBackground);
             _backgroundMusic.Stop();
@@ -168,6 +242,32 @@ namespace UI
             _currentState = _previousState;
             if (_currentState == UIState.MainMenu) _mainMenu.Show();
             if (_currentState == UIState.Paused) _pauseMenu.Show();
+        }
+
+        private void ShowDeathScreen()
+        {
+            _previousState = _currentState;
+            _currentState = UIState.Death;
+            CloseAllWindows();
+            
+            if (_deathWindow != null) 
+                _deathWindow.Show();
+                
+            if (_backgroundMusic != null) 
+                _backgroundMusic.Stop();
+        }
+
+        private void ReloadSceneToMainMenu()
+        {
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        private void ReloadSceneAndStartGame()
+        {
+            Time.timeScale = 1f;
+            _shouldAutoStartGame = true;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
         private void EnablePlayer()
