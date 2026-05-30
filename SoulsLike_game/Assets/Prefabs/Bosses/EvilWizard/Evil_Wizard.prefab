@@ -527,7 +527,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e44573c8464d6ce40a4a8031c27aa9d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAttack_1
-  damage: 20
+  damage: 28
   attackRange: 8
   attackDistance: 5
   canBeBlocked: 1
@@ -543,7 +543,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2916d7f0f9f1c2842a262513b3ab0737, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAttack_2
-  damage: 28
+  damage: 36
   attackRange: 8
   attackDistance: 5
   canBeBlocked: 1
