@@ -278,6 +278,7 @@ MonoBehaviour:
   blockAngle: 120
   blockStaminaCost: 15
   greenEffectDuration: 0.2
+  perfectBlockStaminaRestore: 20
   hurtSound: {fileID: 8300000, guid: d20fb12385464c74ca52f36321198efb, type: 3}
   blockSound: {fileID: 8300000, guid: 56b151a77976b9241bfefa571058e48c, type: 3}
   dieSound: {fileID: 8300000, guid: 98244dcb07f3cae41bd8e795c9507e9d, type: 3}
@@ -452,7 +453,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PotionComponent
   useKey: 104
-  potionCount: 3
+  potionCount: 7
   healAmount: 50
   useSound: {fileID: 8300000, guid: ec5f673bf4128ae4e8df01558406aeca, type: 3}
   noPotionSound: {fileID: 8300000, guid: 04760ec72a31dcd4c99b2cae57461050, type: 3}
