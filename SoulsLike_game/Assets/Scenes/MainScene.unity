@@ -1351,7 +1351,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "WASD - \u041F\u0435\u0440\u0435\u0434\u0432\u0438\u0436\u0435\u043D\u0438\u0435\nK/\u041B\u041A\u041C
+  m_text: "A/D - \u041F\u0435\u0440\u0435\u0434\u0432\u0438\u0436\u0435\u043D\u0438\u0435\nK/\u041B\u041A\u041C
     - \u0410\u0442\u0430\u043A\u0430\nL/\u041F\u041A\u041C - \u0411\u043B\u043E\u043A\nSHIFT
     - \u0423\u043A\u043B\u043E\u043D\u0435\u043D\u0438\u0435\nSPACE - \u041F\u0440\u044B\u0436\u043E\u043A\nH
     - \u041B\u0435\u0447\u0435\u043D\u0438\u0435"
@@ -6610,7 +6610,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1006719242}
   m_Layer: 0
-  m_Name: Level
+  m_Name: LevelArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8324,7 +8324,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1284229453}
   m_Layer: 0
-  m_Name: BossLocation
+  m_Name: BossArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
