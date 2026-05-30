@@ -19,6 +19,7 @@ namespace UI
 
         private PlayerHealthComponent _playerHealth;
         private static bool _loreShownThisSession = false;
+        private static bool _shouldAutoStartGame = false;
 
         private enum UIState
         {
@@ -43,10 +44,19 @@ namespace UI
 
         private void Start()
         {
-            if (_Player)
-                _Player.gameObject.SetActive(false);
+            if (_shouldAutoStartGame)
+            {
+                _shouldAutoStartGame = false;
+                _loreShownThisSession = true;
+                StartGame();
+            }
+            else
+            {
+                if (_Player)
+                    _Player.gameObject.SetActive(false);
 
-            OpenMainMenu();
+                OpenMainMenu();
+            }
         }
 
         private void Update()
@@ -90,7 +100,10 @@ namespace UI
                 _loreWindow.OnContinueClicked += CloseLoreAndStartGame;
 
             if (_deathWindow != null)
+            {
                 _deathWindow.OnMainMenuClicked += ReloadSceneToMainMenu;
+                _deathWindow.OnRespawnClicked += ReloadSceneAndStartGame;
+            }
 
             if (_playerHealth != null)
                 _playerHealth.OnDie += ShowDeathScreen;
@@ -108,7 +121,10 @@ namespace UI
                 _loreWindow.OnContinueClicked -= CloseLoreAndStartGame;
 
             if (_deathWindow != null)
+            {
                 _deathWindow.OnMainMenuClicked -= ReloadSceneToMainMenu;
+                _deathWindow.OnRespawnClicked -= ReloadSceneAndStartGame;
+            }
 
             if (_playerHealth != null)
                 _playerHealth.OnDie -= ShowDeathScreen;
@@ -244,6 +260,13 @@ namespace UI
         private void ReloadSceneToMainMenu()
         {
             Time.timeScale = 1f;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        private void ReloadSceneAndStartGame()
+        {
+            Time.timeScale = 1f;
+            _shouldAutoStartGame = true;
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
