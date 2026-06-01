@@ -1351,10 +1351,18 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "A/D - \u041F\u0435\u0440\u0435\u0434\u0432\u0438\u0436\u0435\u043D\u0438\u0435\nK/\u041B\u041A\u041C
-    - \u0410\u0442\u0430\u043A\u0430\nL/\u041F\u041A\u041C - \u0411\u043B\u043E\u043A\nSHIFT
-    - \u0423\u043A\u043B\u043E\u043D\u0435\u043D\u0438\u0435\nSPACE - \u041F\u0440\u044B\u0436\u043E\u043A\nH
-    - \u041B\u0435\u0447\u0435\u043D\u0438\u0435"
+  m_text: 'A/D - Movement
+
+    K/LMB - Attack
+
+    L/RMB - Block
+
+    SHIFT - Dodge
+
+    SPACE
+    - Jump
+
+    H - Heal'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
